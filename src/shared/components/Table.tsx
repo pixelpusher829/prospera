@@ -1,144 +1,248 @@
-// src/shared/components/Table.tsx
-
-import { ArrowDownUp } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import type React from "react";
 import { Checkbox } from "@/shared/components/forms";
+import { cn } from "@/shared/lib/cn";
 
 export interface Column<T> {
-	header: React.ReactNode;
+	header: string;
+	/** Key used for sorting; omit to make the column unsortable. */
+	sortKey?: string;
 	cell: (row: T) => React.ReactNode;
-	accessor: keyof T | string;
 	className?: string;
-	headerClassName?: string;
+	align?: "left" | "right";
 }
+
+export type SortState = { key: string; direction: "asc" | "desc" };
 
 interface TableProps<T> {
 	data: T[];
 	columns: Column<T>[];
-	selectedIds: Set<string>;
-	toggleSelection: (id: string) => void;
-	toggleSelectAll: () => void;
-	handleSort: (field: keyof T | string) => void;
-	sortField: keyof T | string | null;
-	sortDirection: "asc" | "desc";
-	renderRowActions?: (row: T) => React.ReactNode;
-	actionsColumnClassName?: string;
-	onRowClick?: (row: T) => void;
-	noItemsMessage?: string;
 	getRowId: (row: T) => string;
+	/** Short description of a row for screen readers, e.g. its name. */
+	getRowLabel: (row: T) => string;
+	sort?: SortState;
+	onSort?: (key: string) => void;
+	selectedIds?: Set<string>;
+	onSelectionChange?: (ids: Set<string>) => void;
+	onRowClick?: (row: T) => void;
+	renderRowActions?: (row: T) => React.ReactNode;
+	/** Card layout for phones; the table is used from `md` up. */
+	renderMobileRow: (row: T) => React.ReactNode;
+	empty: React.ReactNode;
+	caption: string;
 }
 
-const Table = <T extends {}>({
+export default function Table<T>({
 	data,
 	columns,
-	selectedIds,
-	toggleSelection,
-	toggleSelectAll,
-	handleSort,
-	sortField,
-	sortDirection,
-	renderRowActions,
-	actionsColumnClassName = "w-16",
-	onRowClick,
-	noItemsMessage = "No items found.",
 	getRowId,
-}: TableProps<T>) => {
-	const allSelected = selectedIds.size === data.length && data.length > 0;
+	getRowLabel,
+	sort,
+	onSort,
+	selectedIds,
+	onSelectionChange,
+	onRowClick,
+	renderRowActions,
+	renderMobileRow,
+	empty,
+	caption,
+}: TableProps<T>) {
+	const selectable = Boolean(selectedIds && onSelectionChange);
+	const selectedCount = data.filter((row) =>
+		selectedIds?.has(getRowId(row)),
+	).length;
+	const allSelected = data.length > 0 && selectedCount === data.length;
+
+	const toggle = (id: string) => {
+		if (!selectedIds || !onSelectionChange) return;
+		const next = new Set(selectedIds);
+		if (next.has(id)) next.delete(id);
+		else next.add(id);
+		onSelectionChange(next);
+	};
+
+	const toggleAll = () => {
+		onSelectionChange?.(
+			allSelected ? new Set() : new Set(data.map((row) => getRowId(row))),
+		);
+	};
+
+	if (data.length === 0) return <>{empty}</>;
 
 	return (
-		<div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
-			<div className="overflow-x-auto">
-				<table className="w-full text-left table-auto">
-					<thead>
-						<tr className="border-b border-slate-100 bg-slate-50 dark:border-slate-700 dark:bg-slate-900">
-							<th className="w-12">
-								<div className="px-6 py-4">
-									<Checkbox
-										checked={allSelected}
-										onChange={toggleSelectAll}
-										className="h-4 w-4 rounded border-slate-200 text-pink-600 focus:ring-pink-500 dark:border-slate-600"
-									/>
-								</div>
-							</th>
-							{columns.map((col, index) => (
-								<th
-									key={index}
-									className={`min-w-max cursor-pointer px-6 py-4 text-xs font-semibold tracking-wider text-slate-500 uppercase hover:text-slate-700 dark:text-slate-400`}
-									onClick={() => handleSort(col.accessor)}
-								>
-									<div
-										className={`flex items-center gap-1 ${col.headerClassName || ""}`}
-									>
-										{col.header}
-										{sortField === col.accessor && (
-											<ArrowDownUp
-												size={14}
-												className={sortDirection === "desc" ? "rotate-180" : ""}
-											/>
-										)}
-									</div>
-								</th>
-							))}
-							{renderRowActions && (
-								<th className={actionsColumnClassName}>
-									<div className="px-6 py-4"></div>
-								</th>
+		<>
+			{/* Phones: stacked cards */}
+			<ul className="space-y-2 md:hidden" aria-label={caption}>
+				{data.map((row) => {
+					const id = getRowId(row);
+					return (
+						<li
+							key={id}
+							className={cn(
+								"card flex items-center gap-3 p-3.5 transition-colors",
+								selectedIds?.has(id) &&
+									"border-violet-300 bg-violet-50/60 dark:border-violet-700 dark:bg-violet-500/10",
 							)}
-						</tr>
-					</thead>
-					<tbody>
-						{data.length > 0 ? (
-							data.map((row) => {
+						>
+							{selectable && (
+								<Checkbox
+									checked={selectedIds?.has(id) ?? false}
+									onCheckedChange={() => toggle(id)}
+									label={`Select ${getRowLabel(row)}`}
+									labelHidden
+									className="p-1"
+								/>
+							)}
+							<button
+								type="button"
+								className="min-w-0 flex-1 text-left"
+								onClick={() => onRowClick?.(row)}
+								disabled={!onRowClick}
+							>
+								{renderMobileRow(row)}
+							</button>
+						</li>
+					);
+				})}
+			</ul>
+
+			{/* Tablet and up: real table */}
+			<div className="card hidden overflow-hidden md:block">
+				<div className="overflow-x-auto">
+					<table className="w-full text-left text-sm">
+						<caption className="sr-only">{caption}</caption>
+						<thead>
+							<tr className="border-b border-slate-100 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-900">
+								{selectable && (
+									<th scope="col" className="w-12 py-3 pl-5">
+										<Checkbox
+											checked={allSelected}
+											indeterminate={selectedCount > 0 && !allSelected}
+											onCheckedChange={toggleAll}
+											label="Select all rows"
+											labelHidden
+										/>
+									</th>
+								)}
+								{columns.map((col) => {
+									const active = sort && col.sortKey === sort.key;
+									return (
+										<th
+											key={col.header}
+											scope="col"
+											aria-sort={
+												active
+													? sort.direction === "asc"
+														? "ascending"
+														: "descending"
+													: undefined
+											}
+											className={cn(
+												"px-4 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400",
+												col.align === "right" && "text-right",
+											)}
+										>
+											{col.sortKey && onSort ? (
+												<button
+													type="button"
+													onClick={() => onSort(col.sortKey as string)}
+													className={cn(
+														"inline-flex items-center gap-1 rounded uppercase hover:text-slate-800 dark:hover:text-white",
+														active && "text-slate-800 dark:text-white",
+													)}
+												>
+													{col.header}
+													{active ? (
+														sort.direction === "asc" ? (
+															<ArrowUp size={13} />
+														) : (
+															<ArrowDown size={13} />
+														)
+													) : (
+														<ChevronsUpDown size={13} className="opacity-40" />
+													)}
+												</button>
+											) : (
+												col.header
+											)}
+										</th>
+									);
+								})}
+								{renderRowActions && (
+									<th scope="col" className="w-14">
+										<span className="sr-only">Actions</span>
+									</th>
+								)}
+							</tr>
+						</thead>
+						<tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+							{data.map((row) => {
 								const id = getRowId(row);
+								const selected = selectedIds?.has(id);
 								return (
 									<tr
 										key={id}
-										className={`group border-b border-slate-100 transition-colors hover:bg-slate-50/50 focus:outline-none dark:border-slate-700 dark:hover:bg-slate-700/50 ${
-											onRowClick ? "cursor-pointer" : ""
-										}`}
 										onClick={() => onRowClick?.(row)}
+										className={cn(
+											"group transition-colors",
+											onRowClick &&
+												"cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50",
+											selected &&
+												"bg-violet-50/60 hover:bg-violet-50 dark:bg-violet-500/10 dark:hover:bg-violet-500/15",
+										)}
 									>
-										<td className="w-12">
-											<div className="px-6 py-4">
+										{selectable && (
+											<td className="py-3 pl-5">
 												<Checkbox
-													checked={selectedIds.has(id)}
-													onChange={() => toggleSelection(id)}
-													onClick={(e) => e.stopPropagation()}
-													className="h-4 w-4 rounded border-slate-200 text-pink-600 focus:ring-pink-500 dark:border-slate-600"
+													checked={selected ?? false}
+													onCheckedChange={() => toggle(id)}
+													label={`Select ${getRowLabel(row)}`}
+													labelHidden
 												/>
-											</div>
-										</td>
-										{columns.map((col, index) => (
+											</td>
+										)}
+										{columns.map((col, i) => (
 											<td
-												key={index}
-												className={`whitespace-nowrap px-6 py-4 ${col.className || ""}`}
+												key={col.header}
+												className={cn(
+													"px-4 py-3 whitespace-nowrap",
+													col.align === "right" && "text-right",
+													col.className,
+												)}
 											>
-												{col.cell(row)}
+												{i === 0 && onRowClick ? (
+													<button
+														type="button"
+														className="text-left focus-visible:outline-offset-4"
+														onClick={(e) => {
+															e.stopPropagation();
+															onRowClick(row);
+														}}
+														aria-label={`Open ${getRowLabel(row)}`}
+													>
+														{col.cell(row)}
+													</button>
+												) : (
+													col.cell(row)
+												)}
 											</td>
 										))}
 										{renderRowActions && (
-											<td className={`text-center ${actionsColumnClassName}`}>
-												<div className="px-6 py-4">{renderRowActions(row)}</div>
+											<td
+												className="pr-3 text-right"
+												onClick={(e) => e.stopPropagation()}
+												onKeyDown={(e) => e.stopPropagation()}
+											>
+												{renderRowActions(row)}
 											</td>
 										)}
 									</tr>
 								);
-							})
-						) : (
-							<tr>
-								<td
-									colSpan={columns.length + (renderRowActions ? 2 : 1)}
-									className="py-12 text-center text-slate-500 dark:text-slate-400"
-								>
-									{noItemsMessage}
-								</td>
-							</tr>
-						)}
-					</tbody>
-				</table>
+							})}
+						</tbody>
+					</table>
+				</div>
 			</div>
-		</div>
+		</>
 	);
-};
-
-export default Table;
+}

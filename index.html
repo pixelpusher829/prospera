@@ -1,17 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Prospera CRM</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+		<title>Prospera</title>
+		<meta
+			name="description"
+			content="Prospera is a personal finance dashboard: track spending, budgets, goals, accounts and clients in one place."
+		/>
+		<meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
+		<meta property="og:title" content="Prospera" />
+		<meta
+			property="og:description"
+			content="Track spending, budgets, goals and accounts in one place."
+		/>
+		<meta property="og:type" content="website" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
-		<link rel="shortcut icon" href="/favicon.svg" type="image/svg">
+		<script>
+			// Apply the saved theme before first paint to avoid a white flash.
+			(() => {
+				let pref = "system";
+				try {
+					pref = localStorage.getItem("theme") || "system";
+				} catch {}
+				const dark =
+					pref === "dark" ||
+					(pref === "system" &&
+						window.matchMedia("(prefers-color-scheme: dark)").matches);
+				document.documentElement.classList.toggle("dark", dark);
+				document.documentElement.style.colorScheme = dark ? "dark" : "light";
+			})();
+		</script>
 		<link rel="stylesheet" href="/src/app/globals.css" />
 	</head>
-	<body class="bg-[#f8f9fc] dark:bg-slate-950 transition-colors duration-300">
+	<body>
+		<noscript>Prospera needs JavaScript to run.</noscript>
 		<div id="root"></div>
 		<script type="module" src="/src/index.tsx"></script>
 	</body>
