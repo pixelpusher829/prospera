@@ -1,70 +1,89 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import type React from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
+
+export type ThemePreference = "light" | "dark" | "system";
 
 interface ThemeContextType {
-  isDarkMode: boolean;
-  toggleTheme: () => void;
+	preference: ThemePreference;
+	isDarkMode: boolean;
+	setPreference: (preference: ThemePreference) => void;
+	toggleTheme: () => void;
 }
 
+const STORAGE_KEY = "theme";
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    // Initialize theme from localStorage or system preference
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        return savedTheme === 'dark';
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false; // Default to light mode if no window (e.g., SSR)
-  });
+function readPreference(): ThemePreference {
+	try {
+		const saved = localStorage.getItem(STORAGE_KEY);
+		if (saved === "light" || saved === "dark" || saved === "system") {
+			return saved;
+		}
+	} catch {
+		// Storage can be unavailable (private mode); fall back to the OS.
+	}
+	return "system";
+}
 
-  const toggleTheme = useCallback(() => {
-    setIsDarkMode(prevMode => !prevMode);
-  }, []);
+const systemPrefersDark = () =>
+	window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-  // Effect to apply 'dark' class to html element and save preference
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDarkMode) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDarkMode]);
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => {
+	const [preference, setPreferenceState] =
+		useState<ThemePreference>(readPreference);
+	const [systemDark, setSystemDark] = useState(systemPrefersDark);
 
-  // Effect to listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      // Only update if user hasn't explicitly set a preference
-      if (!localStorage.getItem('theme')) {
-        setIsDarkMode(e.matches);
-      }
-    };
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+	useEffect(() => {
+		const query = window.matchMedia("(prefers-color-scheme: dark)");
+		const onChange = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+		query.addEventListener("change", onChange);
+		return () => query.removeEventListener("change", onChange);
+	}, []);
 
-  const memoizedValue = useMemo(() => ({
-    isDarkMode,
-    toggleTheme,
-  }), [isDarkMode, toggleTheme]);
+	const isDarkMode =
+		preference === "dark" || (preference === "system" && systemDark);
 
-  return (
-    <ThemeContext.Provider value={memoizedValue}>
-      {children}
-    </ThemeContext.Provider>
-  );
+	useEffect(() => {
+		document.documentElement.classList.toggle("dark", isDarkMode);
+		document.documentElement.style.colorScheme = isDarkMode ? "dark" : "light";
+	}, [isDarkMode]);
+
+	const setPreference = useCallback((next: ThemePreference) => {
+		setPreferenceState(next);
+		try {
+			localStorage.setItem(STORAGE_KEY, next);
+		} catch {
+			// Ignore; the choice still applies for this visit.
+		}
+	}, []);
+
+	const toggleTheme = useCallback(() => {
+		setPreference(isDarkMode ? "light" : "dark");
+	}, [isDarkMode, setPreference]);
+
+	const value = useMemo(
+		() => ({ preference, isDarkMode, setPreference, toggleTheme }),
+		[preference, isDarkMode, setPreference, toggleTheme],
+	);
+
+	return (
+		<ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+	);
 };
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+	const context = useContext(ThemeContext);
+	if (context === undefined) {
+		throw new Error("useTheme must be used within a ThemeProvider");
+	}
+	return context;
 };

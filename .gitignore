@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 
+
+# Convex local backend data and env
+.convex/
+.env
+.env.*
+!.env.example

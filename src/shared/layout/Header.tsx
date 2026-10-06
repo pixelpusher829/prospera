@@ -1,25 +1,41 @@
 import type React from "react";
+import { useEffect } from "react";
 
+/** Page title block. Also sets the browser tab title. */
 export default function Header({
-	children,
 	heading,
 	subheading,
-	className,
+	children,
+	title,
 }: {
+	heading: React.ReactNode;
+	subheading?: React.ReactNode;
 	children?: React.ReactNode;
-	heading: string;
-	subheading: string;
-	className?: string;
-}): React.ReactElement {
+	/** Tab title, when `heading` isn't plain text. */
+	title?: string;
+}) {
+	const tabTitle = title ?? (typeof heading === "string" ? heading : undefined);
+	useEffect(() => {
+		if (tabTitle) document.title = `${tabTitle} · Prospera`;
+	}, [tabTitle]);
+
 	return (
-		<div
-			className={`${className} flex flex-col items-start justify-between gap-6 @2xl:flex-row @2xl:items-end`}
-		>
-			<div>
-				<h1 className="text-3xl font-bold text-slate-700 dark:text-white">{heading}</h1>
-				<p className="mt-1 text-slate-500 dark:text-slate-400">{subheading}</p>
+		<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+			<div className="min-w-0">
+				<h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
+					{heading}
+				</h1>
+				{subheading && (
+					<p className="mt-1 text-sm text-slate-500 sm:text-base dark:text-slate-400">
+						{subheading}
+					</p>
+				)}
 			</div>
-			<div className="flex items-center gap-3 shrink-0">{children}</div>
+			{children && (
+				<div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
+					{children}
+				</div>
+			)}
 		</div>
 	);
 }

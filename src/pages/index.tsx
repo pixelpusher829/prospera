@@ -1,9 +1,0 @@
-export { default as Analytics } from "@/pages/analytics";
-export { default as Budget } from "@/pages/budget";
-export { default as ClientList } from "@/pages/client-list";
-export { default as Dashboard } from "@/pages/dashboard";
-export { default as Goals } from "@/pages/goals";
-export { default as Help } from "@/pages/help";
-export { default as Settings } from "@/pages/settings";
-export { default as Transactions } from "@/pages/transactions";
-export { default as Wallet } from "@/pages/wallet";

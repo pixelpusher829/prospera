@@ -1,287 +1,439 @@
-// src/pages/client-list/index.tsx
-import { ChevronRight, Filter, Plus, Search } from "lucide-react";
-import type React from "react";
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { formatDistanceToNowStrict } from "date-fns";
+import {
+	ChevronDown,
+	CircleCheck,
+	CircleSlash,
+	Download,
+	MoreHorizontal,
+	Pencil,
+	Plus,
+	Search,
+	Trash2,
+	Users,
+	X,
+} from "lucide-react";
+import Papa from "papaparse";
 import { useMemo, useState } from "react";
-import AddClientDrawer from "@/pages/client-list/AddClientDrawer";
+import { toast } from "sonner";
 import Button from "@/shared/components/Button";
-import FilterBar from "@/shared/components/FilterBar";
-import { InputField } from "@/shared/components/forms";
-import { CLIENTS_DATA } from "@/shared/data/constants";
-import Header from "@/shared/layout/Header"; // Added Header import
-import type { Client, ClientStatus } from "@/shared/types/types";
-import { ClientStatus as ClientStatusEnum } from "@/shared/types/types";
-import BulkActionsBar from "./BulkActionsBar";
-import ClientDetailDrawer from "./ClientDetailDrawer";
-import ClientTable from "./ClientTable";
+import { InputField, SelectField, SelectItem } from "@/shared/components/forms";
+import Table, { type Column, type SortState } from "@/shared/components/Table";
+import { Avatar } from "@/shared/components/ui/Avatar";
+import { StatusBadge } from "@/shared/components/ui/Badge";
+import { BulkBar, BulkButton } from "@/shared/components/ui/BulkBar";
+import { EmptyState } from "@/shared/components/ui/EmptyState";
+import { Menu, MenuItem, MenuLabel } from "@/shared/components/ui/Menu";
+import { PageSkeleton } from "@/shared/components/ui/Skeleton";
+import {
+	type Client,
+	optimisticList,
+	stripSystemFields,
+	useAppMutation,
+	useClients,
+	useMoney,
+} from "@/shared/hooks/data";
+import Header from "@/shared/layout/Header";
+import { downloadFile, safeCell } from "@/shared/lib/csv";
+import { parseIsoDate, todayIso } from "@/shared/lib/finance";
+import { LoadDemoButton } from "../dashboard/Onboarding";
+import ClientSheet from "./ClientSheet";
 
-const ClientList: React.FC = () => {
-  const [clients, setClients] = useState<Client[]>(CLIENTS_DATA);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("All");
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+const STATUSES: Client["status"][] = ["Active", "Pending", "Inactive"];
 
-  // Drawer State
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
-  const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
-  const [drawerForm, setDrawerForm] = useState<Partial<Client>>({});
+const lastContact = (iso: string) =>
+	iso === todayIso()
+		? "Today"
+		: formatDistanceToNowStrict(parseIsoDate(iso), { addSuffix: true });
 
-  // Sorting States
-  const [sortField, setSortField] = useState<keyof Client | null>("name");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+export default function ClientList() {
+	const { data: clients } = useClients();
+	const { format } = useMoney();
+	const [search, setSearch] = useState("");
+	const [status, setStatus] = useState("all");
+	const [sort, setSort] = useState<SortState>({
+		key: "name",
+		direction: "asc",
+	});
+	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+	const [sheet, setSheet] = useState<{ open: boolean; client: Client | null }>({
+		open: false,
+		client: null,
+	});
 
-  const sortedClients = useMemo(() => {
-    const currentClients = clients.filter((client) => {
-      const matchesSearch =
-        client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.email.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus =
-        statusFilter === "All" || client.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
+	const ids = (rows: Client[]) => rows.map((c) => c._id as Id<"clients">);
 
-    if (sortField) {
-      currentClients.sort((a, b) => {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          return sortDirection === "asc"
-            ? aValue.localeCompare(bValue)
-            : bValue.localeCompare(aValue);
-        }
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
-        }
-        return 0;
-      });
-    }
+	const bulkSetStatus = useAppMutation(api.clients.bulkSetStatus, {
+		success: ({ ids, status }) =>
+			ids.length === 1
+				? `Marked ${status.toLowerCase()}`
+				: `${ids.length} clients marked ${status.toLowerCase()}`,
+		optimistic: (qc, { ids, status }) => {
+			const set = new Set<string>(ids);
+			return optimisticList(qc, api.clients.list, (list) =>
+				list.map((c) => (set.has(c._id) ? { ...c, status } : c)),
+			);
+		},
+	});
+	const bulkRemove = useAppMutation(api.clients.bulkRemove, {
+		optimistic: (qc, { ids }) => {
+			const set = new Set<string>(ids);
+			return optimisticList(qc, api.clients.list, (list) =>
+				list.filter((c) => !set.has(c._id)),
+			);
+		},
+	});
+	const bulkCreate = useAppMutation(api.clients.bulkCreate);
 
-    return currentClients;
-  }, [clients, searchQuery, statusFilter, sortField, sortDirection]);
+	const removeWithUndo = (rows: Client[]) =>
+		bulkRemove.mutate(
+			{ ids: ids(rows) },
+			{
+				onSuccess: () => {
+					setSelectedIds(new Set());
+					toast(
+						rows.length === 1
+							? `Deleted ${rows[0].name}`
+							: `Deleted ${rows.length} clients`,
+						{
+							action: {
+								label: "Undo",
+								onClick: () =>
+									bulkCreate.mutate(
+										{ items: rows.map(stripSystemFields) },
+										{ onSuccess: () => toast.success("Restored") },
+									),
+							},
+						},
+					);
+				},
+			},
+		);
 
-  const handleSort = (field: keyof Client) => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
+	const filtered = useMemo(() => {
+		if (!clients) return [];
+		const q = search.trim().toLowerCase();
+		const dir = sort.direction === "asc" ? 1 : -1;
+		return clients
+			.filter(
+				(c) =>
+					(status === "all" || c.status === status) &&
+					(!q ||
+						c.name.toLowerCase().includes(q) ||
+						c.email.toLowerCase().includes(q) ||
+						c.company.toLowerCase().includes(q)),
+			)
+			.sort((a, b) => {
+				if (sort.key === "revenue") return (a.revenue - b.revenue) * dir;
+				const key = sort.key as "name" | "company" | "status" | "lastContact";
+				return a[key].localeCompare(b[key]) * dir;
+			});
+	}, [clients, search, status, sort]);
 
-  const toggleSelection = (id: string) => {
-    const newSelected = new Set(selectedIds);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedIds(newSelected);
-  };
+	const selected = filtered.filter((c) => selectedIds.has(c._id));
 
-  const toggleSelectAll = () => {
-    if (selectedIds.size === sortedClients.length && sortedClients.length > 0) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(sortedClients.map((c) => c.id)));
-    }
-  };
+	if (!clients) return <PageSkeleton tiles={0} />;
 
-  const updateClient = (id: string, updates: Partial<Client>) => {
-    setClients((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...updates } : c)),
-    );
-  };
+	const totals = {
+		active: clients.filter((c) => c.status === "Active").length,
+		revenue: clients.reduce((s, c) => s + c.revenue, 0),
+	};
 
-  const handleAddClient = (newClient: Client) => {
-    setClients((prev) => [newClient, ...prev]);
-  };
+	const exportCsv = () => {
+		const rows = selected.length ? selected : filtered;
+		downloadFile(
+			`prospera-clients-${todayIso()}.csv`,
+			Papa.unparse(
+				rows.map((c) => ({
+					Name: safeCell(c.name),
+					Email: safeCell(c.email),
+					Company: safeCell(c.company),
+					Status: c.status,
+					Revenue: c.revenue.toFixed(2),
+					"Last contact": c.lastContact,
+					Notes: safeCell(c.notes ?? ""),
+				})),
+			),
+		);
+		toast.success(
+			`Exported ${rows.length} client${rows.length === 1 ? "" : "s"}`,
+		);
+	};
 
-  const handleBulkStatusChange = (newStatus: ClientStatus) => {
-    setClients((prev) =>
-      prev.map((c) =>
-        selectedIds.has(c.id) ? { ...c, status: newStatus } : c,
-      ),
-    );
-    setSelectedIds(new Set());
-  };
+	const columns: Column<Client>[] = [
+		{
+			header: "Name",
+			sortKey: "name",
+			cell: (c) => (
+				<span className="flex items-center gap-3">
+					<Avatar name={c.name} size="sm" />
+					<span className="min-w-0">
+						<span className="block max-w-56 truncate font-medium text-slate-900 dark:text-white">
+							{c.name}
+						</span>
+						<span className="block max-w-56 truncate text-xs text-slate-500 dark:text-slate-400">
+							{c.email}
+						</span>
+					</span>
+				</span>
+			),
+		},
+		{
+			header: "Company",
+			sortKey: "company",
+			className: "text-slate-600 dark:text-slate-300",
+			cell: (c) =>
+				c.company || (
+					<span className="text-slate-300 dark:text-slate-600">—</span>
+				),
+		},
+		{
+			header: "Status",
+			sortKey: "status",
+			cell: (c) => (
+				<Menu
+					label="Change status"
+					align="start"
+					trigger={
+						<button
+							type="button"
+							className="inline-flex items-center gap-1 rounded-full"
+							aria-label={`Status: ${c.status}. Change status`}
+						>
+							<StatusBadge status={c.status} />
+							<ChevronDown size={12} className="text-slate-400" />
+						</button>
+					}
+				>
+					<MenuLabel>Set status</MenuLabel>
+					{STATUSES.map((s) => (
+						<MenuItem
+							key={s}
+							onSelect={() => bulkSetStatus.mutate({ ids: [c._id], status: s })}
+						>
+							{s}
+						</MenuItem>
+					))}
+				</Menu>
+			),
+		},
+		{
+			header: "Revenue",
+			sortKey: "revenue",
+			align: "right",
+			className: "font-semibold text-slate-900 tabular-nums dark:text-white",
+			cell: (c) => format(c.revenue, { whole: true }),
+		},
+		{
+			header: "Last contact",
+			sortKey: "lastContact",
+			className: "text-slate-500 dark:text-slate-400",
+			cell: (c) => lastContact(c.lastContact),
+		},
+	];
 
-  const handleBulkDelete = () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${selectedIds.size} clients?`,
-      )
-    ) {
-      setClients((prev) => prev.filter((c) => !selectedIds.has(c.id)));
-      setSelectedIds(new Set());
-    }
-  };
+	return (
+		<div className="page pb-28">
+			<Header
+				heading="Clients"
+				subheading="The people and businesses you work with."
+			>
+				{clients.length > 0 && (
+					<Button
+						variant="secondary"
+						icon={<Download size={16} />}
+						onClick={exportCsv}
+					>
+						Export
+					</Button>
+				)}
+				<Button
+					icon={<Plus size={16} />}
+					onClick={() => setSheet({ open: true, client: null })}
+				>
+					Add client
+				</Button>
+			</Header>
 
-  const openDrawer = (client: Client) => {
-    setSelectedClient(client);
-    setDrawerForm({ ...client });
-    setIsDrawerOpen(true);
-  };
+			{clients.length === 0 ? (
+				<EmptyState
+					icon={Users}
+					title="No clients yet"
+					description="Track the businesses you work with, what they've earned you and when you last spoke."
+				>
+					<Button
+						icon={<Plus size={16} />}
+						onClick={() => setSheet({ open: true, client: null })}
+					>
+						Add client
+					</Button>
+					<LoadDemoButton />
+				</EmptyState>
+			) : (
+				<>
+					<div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+						<InputField
+							aria-label="Search clients"
+							placeholder="Search name, email or company"
+							icon={<Search />}
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							containerClassName="sm:max-w-sm"
+							suffix={
+								search && (
+									<button
+										type="button"
+										onClick={() => setSearch("")}
+										className="rounded-md p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+										aria-label="Clear search"
+									>
+										<X size={14} />
+									</button>
+								)
+							}
+						/>
+						<SelectField
+							aria-label="Status"
+							value={status}
+							onValueChange={setStatus}
+							containerClassName="sm:w-44"
+						>
+							<SelectItem value="all">All statuses</SelectItem>
+							{STATUSES.map((s) => (
+								<SelectItem key={s} value={s}>
+									{s}
+								</SelectItem>
+							))}
+						</SelectField>
+						<p className="text-sm text-slate-500 sm:ml-auto dark:text-slate-400">
+							{totals.active} active · {format(totals.revenue, { whole: true })}{" "}
+							total revenue
+						</p>
+					</div>
 
-  const saveDrawerChanges = () => {
-    if (selectedClient && drawerForm) {
-      updateClient(selectedClient.id, drawerForm);
-      setIsDrawerOpen(false);
-    }
-  };
+					<Table
+						caption="Clients"
+						data={filtered}
+						columns={columns}
+						getRowId={(c) => c._id}
+						getRowLabel={(c) => c.name}
+						sort={sort}
+						onSort={(key) =>
+							setSort((s) => ({
+								key,
+								direction:
+									s.key === key && s.direction === "asc" ? "desc" : "asc",
+							}))
+						}
+						selectedIds={selectedIds}
+						onSelectionChange={setSelectedIds}
+						onRowClick={(client) => setSheet({ open: true, client })}
+						empty={
+							<EmptyState
+								icon={Search}
+								title="No matching clients"
+								description="Try another search or status."
+							>
+								<Button
+									variant="secondary"
+									onClick={() => {
+										setSearch("");
+										setStatus("all");
+									}}
+								>
+									Clear filters
+								</Button>
+							</EmptyState>
+						}
+						renderMobileRow={(c) => (
+							<span className="flex items-center gap-3">
+								<Avatar name={c.name} size="sm" />
+								<span className="min-w-0 flex-1">
+									<span className="block truncate font-medium text-slate-900 dark:text-white">
+										{c.name}
+									</span>
+									<span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+										{c.company || c.email} · {lastContact(c.lastContact)}
+									</span>
+								</span>
+								<StatusBadge status={c.status} />
+							</span>
+						)}
+						renderRowActions={(c) => (
+							<Menu
+								label="Client actions"
+								trigger={
+									<Button
+										variant="ghost"
+										size="icon-sm"
+										aria-label={`Actions for ${c.name}`}
+										className="text-slate-400 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+									>
+										<MoreHorizontal size={18} />
+									</Button>
+								}
+							>
+								<MenuItem
+									icon={<Pencil />}
+									onSelect={() => setSheet({ open: true, client: c })}
+								>
+									Open
+								</MenuItem>
+								<MenuItem
+									icon={<Trash2 />}
+									onSelect={() => removeWithUndo([c])}
+									danger
+								>
+									Delete
+								</MenuItem>
+							</Menu>
+						)}
+					/>
+				</>
+			)}
 
-  return (
-    <>
-      <div className="@container container">
-        <Header heading="Clients" subheading="Manage your client relationships">
-          <div className="flex w-full items-center gap-3 md:w-auto">
-            <Button
-              onClick={() => setIsAddDrawerOpen(true)}
-              icon={<Plus size={18} />}
-            >
-              Add Client
-            </Button>
-          </div>
-        </Header>
+			<BulkBar
+				count={selected.length}
+				noun="clients"
+				onClear={() => setSelectedIds(new Set())}
+			>
+				<BulkButton
+					icon={<CircleCheck />}
+					onClick={() => {
+						bulkSetStatus.mutate({ ids: ids(selected), status: "Active" });
+						setSelectedIds(new Set());
+					}}
+				>
+					Set active
+				</BulkButton>
+				<BulkButton
+					icon={<CircleSlash />}
+					onClick={() => {
+						bulkSetStatus.mutate({ ids: ids(selected), status: "Inactive" });
+						setSelectedIds(new Set());
+					}}
+				>
+					Set inactive
+				</BulkButton>
+				<BulkButton icon={<Download />} onClick={exportCsv}>
+					Export
+				</BulkButton>
+				<BulkButton
+					danger
+					icon={<Trash2 />}
+					onClick={() => removeWithUndo(selected)}
+				>
+					Delete
+				</BulkButton>
+			</BulkBar>
 
-        <FilterBar>
-          <div className="relative flex-1">
-            <InputField
-              type="text"
-              placeholder="Search clients..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              icon={<Search size={18} />}
-              iconPosition="left"
-              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pr-4 text-sm text-slate-700 transition-all focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-white"
-            />
-          </div>
-          <div className="flex gap-3">
-            <div className="relative">
-              <button
-                onClick={() => setIsStatusFilterOpen(!isStatusFilterOpen)}
-                className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-600 focus:ring-2 focus:ring-pink-500/20 focus:outline-none md:w-48 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-                type="button"
-              >
-                <span>
-                  {statusFilter === "All" ? "All Statuses" : statusFilter}
-                </span>
-                <ChevronRight
-                  size={14}
-                  className={`rotate-90 text-slate-400 transition-transform ${
-                    isStatusFilterOpen ? "rotate-[-90deg] transform" : ""
-                  }`}
-                />
-              </button>
-              {isStatusFilterOpen && (
-                <div className="absolute top-full right-0 z-10 mt-2 w-full rounded-xl border border-slate-200 bg-white shadow-lg md:w-48 dark:border-slate-700 dark:bg-slate-800">
-                  <div
-                    onClick={() => {
-                      setStatusFilter("All");
-                      setIsStatusFilterOpen(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setStatusFilter("All");
-                        setIsStatusFilterOpen(false);
-                      }
-                    }}
-                    className="cursor-pointer px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
-                    tabIndex={0}
-                  >
-                    All Statuses
-                  </div>
-                  <div
-                    onClick={() => {
-                      setStatusFilter(ClientStatusEnum.Active);
-                      setIsStatusFilterOpen(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setStatusFilter(ClientStatusEnum.Active);
-                        setIsStatusFilterOpen(false);
-                      }
-                    }}
-                    className="cursor-pointer px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
-                  >
-                    Active
-                  </div>
-                  <div
-                    onClick={() => {
-                      setStatusFilter(ClientStatusEnum.Pending);
-                      setIsStatusFilterOpen(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setStatusFilter(ClientStatusEnum.Pending);
-                        setIsStatusFilterOpen(false);
-                      }
-                    }}
-                    className="cursor-pointer px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
-                  >
-                    Pending
-                  </div>
-                  <div
-                    onClick={() => {
-                      setStatusFilter(ClientStatusEnum.Inactive);
-                      setIsStatusFilterOpen(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setStatusFilter(ClientStatusEnum.Inactive);
-                        setIsStatusFilterOpen(false);
-                      }
-                    }}
-                    className="cursor-pointer px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
-                  >
-                    Inactive
-                  </div>
-                </div>
-              )}
-            </div>
-            <button className="rounded-xl border border-slate-200 bg-white p-3 text-slate-500 hover:text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:text-white">
-              <Filter size={18} />
-            </button>
-          </div>
-        </FilterBar>
-
-        <BulkActionsBar
-          selectedIds={selectedIds}
-          handleBulkStatusChange={handleBulkStatusChange}
-          handleBulkDelete={handleBulkDelete}
-          setSelectedIds={setSelectedIds}
-        />
-        <ClientTable
-          sortedClients={sortedClients}
-          selectedIds={selectedIds}
-          toggleSelectAll={toggleSelectAll}
-          toggleSelection={toggleSelection}
-          handleSort={handleSort}
-          sortField={sortField}
-          sortDirection={sortDirection}
-          updateClient={updateClient}
-          openDrawer={openDrawer}
-        />
-      </div>
-
-      <AddClientDrawer
-        isOpen={isAddDrawerOpen}
-        onClose={() => setIsAddDrawerOpen(false)}
-        onAddClient={handleAddClient}
-      />
-
-      <ClientDetailDrawer
-        isDrawerOpen={isDrawerOpen}
-        setIsDrawerOpen={setIsDrawerOpen}
-        selectedClient={selectedClient}
-        drawerForm={drawerForm}
-        setDrawerForm={setDrawerForm}
-        saveDrawerChanges={saveDrawerChanges}
-        setClients={setClients}
-      />
-    </>
-  );
-};
-
-export default ClientList;
+			<ClientSheet
+				open={sheet.open}
+				onOpenChange={(open) => setSheet((s) => ({ ...s, open }))}
+				client={sheet.client}
+				onDelete={(c) => removeWithUndo([c])}
+			/>
+		</div>
+	);
+}

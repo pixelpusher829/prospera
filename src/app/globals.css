@@ -2,62 +2,114 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+	--font-sans:
+		"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+	--color-brand-red: #f05b57;
+	--color-brand-pink: #ec1b69;
+
+	--animate-fade-in: fade-in 150ms ease-out;
+	--animate-fade-out: fade-out 120ms ease-in;
+	--animate-pop-in: pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+	--animate-pop-out: pop-out 120ms ease-in;
+	--animate-sheet-in: sheet-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
+	--animate-sheet-out: sheet-out 180ms ease-in;
+	--animate-rise: rise 240ms cubic-bezier(0.16, 1, 0.3, 1);
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+	@keyframes fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+	@keyframes pop-in {
+		from {
+			opacity: 0;
+			transform: translateY(4px) scale(0.97);
+		}
+	}
+	@keyframes pop-out {
+		to {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+	@keyframes sheet-in {
+		from {
+			transform: translateX(100%);
+		}
+	}
+	@keyframes sheet-out {
+		to {
+			transform: translateX(100%);
+		}
+	}
+	@keyframes rise {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+	}
+}
+
 @layer base {
-	:root {
-		--primary-red: #f05b57;
-		--primary-pink: #ec1b69;
+	html {
+		-webkit-tap-highlight-color: transparent;
+	}
+	body {
+		@apply bg-slate-50 font-sans text-slate-700 antialiased dark:bg-slate-950 dark:text-slate-300;
+	}
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-violet-500;
 	}
 	input[type="checkbox"] {
-		accent-color: var(--color-violet-700);
+		accent-color: var(--color-violet-600);
 	}
-}
-
-@layer utilities {
-	.bg-primary-gradient {
-		@apply bg-gradient-to-b from-[var(--primary-red)] to-[var(--primary-pink)];
+	/* Make the native date picker icon visible in dark mode. */
+	.dark input[type="date"]::-webkit-calendar-picker-indicator {
+		filter: invert(0.8);
 	}
-
-	.container {
-		@apply mx-auto max-w-[1600px] space-y-8 p-6;
-	}
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-	width: 6px;
-	height: 6px;
-}
-::-webkit-scrollbar-track {
-	background: transparent;
-}
-::-webkit-scrollbar-thumb {
-	background: #cbd5e1;
-	border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-	background: #94a3b8;
-}
-.dark ::-webkit-scrollbar-thumb {
-	background: #475569;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-	background: #64748b;
 }
 
 @layer components {
-	.sidebar-nav-item {
-		@apply relative flex w-full items-center gap-4 rounded-2xl px-3 py-3 text-slate-500 transition-all duration-300 hover:bg-pink-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white;
+	.card {
+		@apply rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900;
 	}
-	.sidebar-nav-item::before {
-		@apply bg-gradient-to-b from-[var(--primary-red)] to-[var(--primary-pink)] content-[''] absolute inset-0 rounded-2xl opacity-0 transition-all duration-300;
+	.page {
+		@apply mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8;
 	}
-	.sidebar-nav-item.active {
-		@apply text-white shadow-lg shadow-red-200/50 dark:shadow-none;
+	.nav-item {
+		@apply relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-white;
 	}
-	.sidebar-nav-item.active::before {
-		@apply opacity-100 dark:opacity-0;
+	.nav-item[aria-current="page"] {
+		@apply bg-linear-to-b from-brand-red to-brand-pink text-white shadow-md shadow-pink-500/20 hover:text-white dark:from-brand-red/90 dark:to-brand-pink/90 dark:shadow-none;
 	}
-	.sidebar-nav-item > * {
-		@apply relative; /* to ensure content is above pseudo-element */
+	.link {
+		@apply font-medium text-violet-600 underline-offset-4 hover:text-violet-700 hover:underline dark:text-violet-400 dark:hover:text-violet-300;
+	}
+}
+
+/* Thin scrollbars */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-slate-300) transparent;
+}
+.dark * {
+	scrollbar-color: var(--color-slate-700) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
 	}
 }
