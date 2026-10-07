@@ -422,9 +422,10 @@ export default function Settings() {
 				subheading="Manage your profile, preferences and data."
 			/>
 			<div className="grid gap-6 lg:grid-cols-[13rem_1fr]">
+				{/* Stays pinned while scrolling: a tab strip on phones, a list on desktop. */}
 				<nav
 					aria-label="Settings sections"
-					className="lg:sticky lg:top-6 lg:self-start"
+					className="sticky top-0 z-10 -mx-4 bg-slate-50/90 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6 lg:top-6 lg:mx-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:bg-slate-950/90 lg:dark:bg-transparent"
 				>
 					<ul className="flex gap-1 overflow-x-auto lg:flex-col">
 						{sections.map((s) => (
@@ -446,7 +447,7 @@ export default function Settings() {
 						))}
 					</ul>
 				</nav>
-				<div className="max-w-3xl min-w-0 space-y-6 [&>*]:scroll-mt-6">
+				<div className="max-w-3xl min-w-0 space-y-6 [&>*]:scroll-mt-20 lg:[&>*]:scroll-mt-6">
 					{viewer.isGuest && <GuestNotice />}
 					<ProfileSection />
 					<PreferencesSection />

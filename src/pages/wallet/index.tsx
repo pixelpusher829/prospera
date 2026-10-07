@@ -48,7 +48,7 @@ function CreditCardTile({
 		>
 			<div
 				className={cn(
-					"relative flex aspect-[1.586] flex-col justify-between overflow-hidden rounded-2xl bg-linear-to-br p-5 text-white shadow-lg transition-transform group-hover:-translate-y-1",
+					"@container relative flex aspect-[1.586] flex-col justify-between overflow-hidden rounded-2xl bg-linear-to-br p-5 text-white shadow-lg transition-transform group-hover:-translate-y-1",
 					account.colorTheme ?? "from-slate-700 to-slate-950",
 				)}
 			>
@@ -67,11 +67,12 @@ function CreditCardTile({
 						className="mb-3 h-7 w-10 rounded-md bg-linear-to-br from-amber-200/70 to-amber-400/50"
 						aria-hidden
 					/>
-					<p className="font-mono text-lg tracking-[0.2em] opacity-90">
+					{/* Scales with the card so the number never overflows a narrow tile. */}
+					<p className="font-mono text-[clamp(0.8rem,5.5cqw,1.125rem)] tracking-[0.2em] whitespace-nowrap opacity-90">
 						•••• •••• •••• {account.mask ?? "••••"}
 					</p>
-					<div className="mt-2 flex items-end justify-between text-xs">
-						<span className="truncate font-medium tracking-wide uppercase opacity-80">
+					<div className="mt-2 flex items-end justify-between gap-3 text-xs">
+						<span className="min-w-0 truncate font-medium tracking-wide uppercase opacity-80">
 							{holder}
 						</span>
 						{account.expiry && (
@@ -80,11 +81,11 @@ function CreditCardTile({
 					</div>
 				</div>
 			</div>
-			<div className="mt-2 flex items-center justify-between px-1 text-sm">
-				<span className="truncate text-slate-600 dark:text-slate-300">
+			<div className="mt-2 flex items-center justify-between gap-3 px-1 text-sm">
+				<span className="min-w-0 truncate text-slate-600 dark:text-slate-300">
 					{account.name}
 				</span>
-				<span className="font-semibold text-slate-900 tabular-nums dark:text-white">
+				<span className="shrink-0 font-semibold text-slate-900 tabular-nums dark:text-white">
 					{format(Math.max(0, -account.balance))} owed
 				</span>
 			</div>
@@ -118,7 +119,7 @@ function AccountRow({
 		<button
 			type="button"
 			onClick={onClick}
-			className="card flex w-full items-center gap-4 p-4 text-left transition-[border-color,box-shadow] hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700"
+			className="card flex w-full items-center gap-3 p-4 text-left sm:gap-4 transition-[border-color,box-shadow] hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700"
 		>
 			<span
 				className={cn(
@@ -139,7 +140,7 @@ function AccountRow({
 					{subtitle}
 				</span>
 			</span>
-			<span className="text-right">
+			<span className="shrink-0 text-right">
 				<span
 					className={cn(
 						"block font-bold tabular-nums",

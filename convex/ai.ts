@@ -21,7 +21,27 @@ const rateLimiter = new RateLimiter(components.rateLimiter, {
 	aiGlobal: { kind: "fixed window", rate: 300, period: HOUR },
 });
 
-const DEFAULT_MODEL = "gemini-2.5-flash";
+// Google's rolling alias for the newest Flash model, so retirements don't break this.
+const DEFAULT_MODEL = "gemini-flash-latest";
+
+function geminiErrorMessage(status: number, model: string): string {
+	switch (status) {
+		case 503:
+			return "Google's AI is overloaded right now (high demand). Try again in a minute or two.";
+		case 429:
+			return "The Gemini API key has hit its rate limit or free quota. Wait a bit, or check usage in Google AI Studio.";
+		case 400:
+		case 401:
+		case 403:
+			return "Google rejected the API key. Check GEMINI_API_KEY on the Convex deployment.";
+		case 404:
+			return `The AI model "${model}" isn't available for this API key. Set GEMINI_MODEL to a model it can use.`;
+		default:
+			return status >= 500
+				? `Google's AI service had an error (${status}). Try again shortly.`
+				: `The AI request failed (${status}). Check the Convex logs for details.`;
+	}
+}
 
 export const latest = query({
 	args: {},
@@ -158,9 +178,7 @@ Write exactly three short sentences of specific, actionable advice: one on cash 
 
 		if (!response.ok) {
 			console.error("Gemini error", response.status, await response.text());
-			throw new ConvexError(
-				"The AI service is unavailable right now. Please try again later.",
-			);
+			throw new ConvexError(geminiErrorMessage(response.status, model));
 		}
 
 		const json = (await response.json()) as {

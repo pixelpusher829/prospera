@@ -90,7 +90,7 @@ export default function Table<T>({
 									onCheckedChange={() => toggle(id)}
 									label={`Select ${getRowLabel(row)}`}
 									labelHidden
-									className="p-1"
+									className="-m-3 p-3"
 								/>
 							)}
 							<button

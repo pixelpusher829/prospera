@@ -109,9 +109,14 @@ export default function Sidebar({
 				id="app-sidebar"
 				aria-label="Main navigation"
 				className={cn(
-					"fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white transition-[transform,width] duration-300 ease-out dark:border-slate-800 dark:bg-slate-900",
-					"lg:static lg:z-auto lg:translate-x-0",
-					isMobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full",
+					"fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-slate-200 bg-white transition-[transform,width,visibility] duration-300 ease-out dark:border-slate-800 dark:bg-slate-900",
+					// The drawer sits outside the shell's safe-area padding.
+					"pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]",
+					"lg:visible lg:static lg:z-auto lg:max-w-none lg:translate-x-0 lg:p-0",
+					// `invisible` keeps the closed drawer out of the tab order.
+					isMobileOpen
+						? "translate-x-0 shadow-2xl"
+						: "invisible -translate-x-full",
 					isCollapsed ? "lg:w-20" : "lg:w-64",
 				)}
 			>

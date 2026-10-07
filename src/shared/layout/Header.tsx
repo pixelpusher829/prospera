@@ -32,7 +32,7 @@ export default function Header({
 				)}
 			</div>
 			{children && (
-				<div className="flex flex-wrap items-center gap-2 sm:shrink-0 sm:justify-end">
+				<div className="flex flex-wrap items-center gap-2 *:grow sm:shrink-0 sm:justify-end sm:*:grow-0">
 					{children}
 				</div>
 			)}

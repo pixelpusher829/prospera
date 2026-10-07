@@ -4,7 +4,7 @@ import type React from "react";
 import { cn } from "@/shared/lib/cn";
 
 const surface =
-	"z-50 min-w-44 overflow-hidden rounded-xl border border-slate-200 bg-white p-1 text-sm shadow-lg shadow-slate-900/5 outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40";
+	"z-50 min-w-44 max-w-[calc(100vw-1.5rem)] overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1 text-sm shadow-lg shadow-slate-900/5 outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40";
 
 /** A dropdown of actions. `trigger` must be a single focusable element. */
 export function Menu({
@@ -25,7 +25,11 @@ export function Menu({
 				<Dropdown.Content
 					align={align}
 					sideOffset={6}
-					className={surface}
+					collisionPadding={12}
+					className={cn(
+						surface,
+						"max-h-[var(--radix-dropdown-menu-content-available-height)]",
+					)}
 					aria-label={label}
 				>
 					{children}
@@ -103,7 +107,11 @@ export function Popover({
 					align={align}
 					sideOffset={8}
 					collisionPadding={12}
-					className={cn(surface, "w-72 p-4", className)}
+					className={cn(
+						surface,
+						"max-h-[var(--radix-popover-content-available-height)] w-72 p-4",
+						className,
+					)}
 				>
 					{children}
 				</RadixPopover.Content>

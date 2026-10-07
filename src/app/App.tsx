@@ -79,7 +79,7 @@ function Shell() {
 	}, [pathname]);
 
 	return (
-		<div className="flex h-dvh overflow-hidden">
+		<div className="flex h-dvh overflow-hidden pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
 			<a
 				href="#main"
 				className="sr-only z-[100] rounded-lg bg-violet-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
@@ -93,7 +93,7 @@ function Shell() {
 					id="main"
 					ref={mainRef}
 					tabIndex={-1}
-					className="flex-1 overflow-y-auto outline-none"
+					className="flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)] outline-none"
 				>
 					<ErrorBoundary inline key={pathname}>
 						<Suspense fallback={<PageSkeleton />}>

@@ -73,7 +73,7 @@ function Tile({
 		<Link
 			to={to}
 			className={cn(
-				"group relative flex min-h-40 flex-col justify-between overflow-hidden rounded-2xl p-5 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-lg",
+				"group relative flex min-h-32 flex-col gap-4 sm:min-h-40 justify-between overflow-hidden rounded-2xl p-5 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-lg",
 				tone === "dark"
 					? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 dark:bg-linear-to-br dark:from-violet-600/30 dark:to-slate-900 dark:ring-1 dark:ring-violet-500/20"
 					: "card hover:shadow-slate-200/60 dark:hover:shadow-black/30",

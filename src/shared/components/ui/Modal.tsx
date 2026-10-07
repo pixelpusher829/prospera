@@ -37,7 +37,12 @@ export function Modal({
 	const isSheet = variant === "sheet";
 	const body = (
 		<>
-			<div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 sm:px-6">
+			<div
+				className={cn(
+					"min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6",
+					!footer && "pb-[max(1.25rem,env(safe-area-inset-bottom))]",
+				)}
+			>
 				{children}
 			</div>
 			{footer && (
@@ -56,7 +61,7 @@ export function Modal({
 					className={cn(
 						"fixed z-50 flex flex-col bg-white shadow-2xl outline-none dark:bg-slate-900 dark:ring-1 dark:ring-slate-800",
 						isSheet
-							? "inset-y-0 right-0 w-full data-[state=closed]:animate-sheet-out data-[state=open]:animate-sheet-in sm:max-w-md"
+							? "inset-y-0 right-0 w-full pt-[env(safe-area-inset-top)] data-[state=closed]:animate-sheet-out data-[state=open]:animate-sheet-in sm:max-w-md"
 							: cn(
 									"inset-x-0 bottom-0 max-h-[92dvh] rounded-t-3xl data-[state=closed]:animate-fade-out data-[state=open]:animate-rise",
 									"sm:inset-x-auto sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:max-h-[85dvh] sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:data-[state=closed]:animate-pop-out sm:data-[state=open]:animate-pop-in",
