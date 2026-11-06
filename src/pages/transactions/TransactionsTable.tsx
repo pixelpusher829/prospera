@@ -35,9 +35,9 @@ export function TypeIcon({ type }: { type: Transaction["type"] }) {
 			)}
 		>
 			{type === "income" ? (
-				<ArrowDownLeft size={16} />
-			) : (
 				<ArrowUpRight size={16} />
+			) : (
+				<ArrowDownLeft size={16} />
 			)}
 		</span>
 	);

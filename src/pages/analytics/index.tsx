@@ -46,6 +46,7 @@ import { formatPercent } from "@/shared/lib/money";
 import { TINTS, type Tint } from "@/shared/lib/tints";
 import { LoadDemoButton } from "../dashboard/Onboarding";
 import AiAdvisor from "./AiAdvisor";
+import { CashFlowChart } from "../dashboard/CashFlowChart";
 import { CATEGORY_COLORS, useChartTheme } from "./chartTheme";
 
 function StatCard({
@@ -121,6 +122,7 @@ export default function Analytics() {
 	const { format } = useMoney();
 	const chart = useChartTheme();
 	const [range, setRange] = useState("6");
+	const [flowView, setFlowView] = useState<"flow" | "compare">("flow");
 	const today = todayIso();
 	const thisMonth = monthKey(today);
 	const [month, setMonth] = useState(thisMonth);
@@ -241,7 +243,7 @@ export default function Analytics() {
 					value={format(summary.month.income)}
 					change={summary.incomeChange}
 					goodWhenUp
-					icon={ArrowDownLeft}
+					icon={ArrowUpRight}
 					tint="emerald"
 					detail={`${summary.month.incomeCount} deposit${summary.month.incomeCount === 1 ? "" : "s"} · ${format(summary.previousToDate.income, { compact: true })} by now last month`}
 				/>
@@ -250,7 +252,7 @@ export default function Analytics() {
 					value={format(summary.month.expense)}
 					change={summary.expenseChange}
 					goodWhenUp={false}
-					icon={ArrowUpRight}
+					icon={ArrowDownLeft}
 					detail={`${summary.month.expenseCount} purchases in ${summary.month.categories} categor${summary.month.categories === 1 ? "y" : "ies"}`}
 				/>
 			</div>
@@ -348,66 +350,66 @@ export default function Analytics() {
 							No spending in {monthLabel(month, true)}.
 						</p>
 					) : (
-						<>
-							<div className="relative h-52">
-								<div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-									<span className="text-xs text-zinc-500 dark:text-zinc-400">
-										Spent
-									</span>
-									<span className="text-xl font-semibold text-zinc-900 tabular-nums dark:text-white">
-										{format(breakdownTotal, { whole: breakdownTotal >= 10000 })}
-									</span>
+							<>
+								<div className="relative h-52">
+									<div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+										<span className="text-xs text-zinc-500 dark:text-zinc-400">
+											Spent
+										</span>
+										<span className="text-xl font-semibold text-zinc-900 tabular-nums dark:text-white">
+											{format(breakdownTotal, { whole: breakdownTotal >= 10000 })}
+										</span>
+									</div>
+									<ResponsiveContainer width="100%" height="100%">
+										<PieChart>
+											<Pie
+												data={breakdown}
+												dataKey="value"
+												nameKey="name"
+												innerRadius="68%"
+												outerRadius="95%"
+												paddingAngle={2}
+												cornerRadius={3}
+												startAngle={90}
+												endAngle={-270}
+												stroke="none"
+											>
+												{breakdown.map((b, i) => (
+													<Cell
+														key={b.name}
+														fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
+													/>
+												))}
+											</Pie>
+											<Tooltip
+												{...chart.tooltip}
+												formatter={(v, name) => [format(Number(v)), name]}
+											/>
+										</PieChart>
+									</ResponsiveContainer>
 								</div>
-								<ResponsiveContainer width="100%" height="100%">
-									<PieChart>
-										<Pie
-											data={breakdown}
-											dataKey="value"
-											nameKey="name"
-											innerRadius="68%"
-											outerRadius="95%"
-											paddingAngle={2}
-											cornerRadius={3}
-											startAngle={90}
-											endAngle={-270}
-											stroke="none"
-										>
-											{breakdown.map((b, i) => (
-												<Cell
-													key={b.name}
-													fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
-												/>
-											))}
-										</Pie>
-										<Tooltip
-											{...chart.tooltip}
-											formatter={(v, name) => [format(Number(v)), name]}
-										/>
-									</PieChart>
-								</ResponsiveContainer>
-							</div>
-							<ul className="mt-4 space-y-2">
-								{breakdown.map((b, i) => (
-									<li key={b.name} className="flex items-center gap-2 text-sm">
-										<span
-											className="size-2.5 shrink-0 rounded-full"
-											style={{
-												background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
-											}}
-										/>
-										<span className="min-w-0 flex-1 truncate text-zinc-600 dark:text-zinc-300">
-											{b.name}
-										</span>
-										<span className="text-zinc-400 tabular-nums">
-											{b.share}%
-										</span>
-										<span className="w-24 text-right font-medium text-zinc-900 tabular-nums dark:text-white">
-											{format(b.value)}
-										</span>
-									</li>
-								))}
-							</ul>
-						</>
+								<ul className="mt-4 space-y-2">
+									{breakdown.map((b, i) => (
+										<li key={b.name} className="flex items-center gap-2 text-sm">
+											<span
+												className="size-2.5 shrink-0 rounded-full"
+												style={{
+													background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+												}}
+											/>
+											<span className="min-w-0 flex-1 truncate text-zinc-600 dark:text-zinc-300">
+												{b.name}
+											</span>
+											<span className="text-zinc-400 tabular-nums">
+												{b.share}%
+											</span>
+											<span className="w-24 text-right font-medium text-zinc-900 tabular-nums dark:text-white">
+												{format(b.value)}
+											</span>
+										</li>
+									))}
+								</ul>
+							</>
 					)}
 				</Card>
 			</div>
@@ -415,9 +417,47 @@ export default function Analytics() {
 			<div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
 				<Card className="xl:col-span-2">
 					<CardHeader
-						title="Income vs. spending"
-						description="Monthly totals"
+						title="Cash flow"
+						description={
+							flowView === "flow"
+								? "Income above the line, spending below"
+								: "Monthly totals side by side"
+						}
+						action={
+							<fieldset className="flex gap-1 rounded-lg bg-zinc-100 p-0.5 dark:bg-zinc-800/70">
+								<legend className="sr-only">Chart style</legend>
+								{(
+									[
+										["flow", "Net"],
+										["compare", "Side by side"],
+									] as const
+								).map(([value, label]) => (
+									<button
+										key={value}
+										type="button"
+										aria-pressed={flowView === value}
+										onClick={() => setFlowView(value)}
+										className={cn(
+											"rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+											flowView === value
+												? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-white"
+												: "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white",
+										)}
+									>
+										{label}
+									</button>
+								))}
+							</fieldset>
+						}
 					/>
+					{flowView === "flow" ? (
+						<CashFlowChart
+							series={series}
+							format={(n) => format(n)}
+							axisFormat={compact}
+							className="h-72"
+						/>
+					) : (
 					<div className="h-72">
 						<ResponsiveContainer width="100%" height="100%">
 							<BarChart
@@ -476,6 +516,7 @@ export default function Analytics() {
 							</BarChart>
 						</ResponsiveContainer>
 					</div>
+					)}
 				</Card>
 				<AiAdvisor hasData={transactions.length >= 3} />
 			</div>

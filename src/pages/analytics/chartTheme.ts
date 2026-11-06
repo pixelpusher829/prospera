@@ -1,8 +1,8 @@
 import { useTheme } from "@/shared/contexts/ThemeContext";
 
 export const CATEGORY_COLORS = [
-	"#dd1a62",
 	"#0ea5e9",
+	"#dd1a62",
 	"#f59e0b",
 	"#10b981",
 	"#52525b",

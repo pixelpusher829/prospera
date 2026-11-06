@@ -32,7 +32,6 @@ import { cn } from "@/shared/lib/cn";
 import { goalProgress, parseIsoDate, todayIso } from "@/shared/lib/finance";
 import { GOAL_ICONS, iconFor } from "@/shared/lib/icons";
 import { currencySymbol, parseMoney } from "@/shared/lib/money";
-import { BRAND_GRADIENT } from "@/shared/lib/tints";
 import GoalModal from "./GoalModal";
 
 function ContributeModal({
@@ -213,7 +212,7 @@ function GoalCard({
 				<div
 					className={cn(
 						"h-full rounded-full transition-[width] duration-700 ease-out",
-						BRAND_GRADIENT,
+						"bg-emerald-500 dark:bg-emerald-400",
 					)}
 					style={{ width: `${Math.max(2, p.pct)}%` }}
 				/>

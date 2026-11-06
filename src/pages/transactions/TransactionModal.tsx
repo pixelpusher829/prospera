@@ -144,8 +144,8 @@ export default function TransactionModal({
 				<legend className="sr-only">Transaction type</legend>
 				{(
 					[
-						["expense", "Expense", ArrowUpRight],
-						["income", "Income", ArrowDownLeft],
+						["expense", "Expense", ArrowDownLeft],
+						["income", "Income", ArrowUpRight],
 					] as const
 				).map(([value, label, Icon]) => {
 					const active = form.values.type === value;

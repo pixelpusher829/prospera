@@ -57,6 +57,22 @@ export default function Budget() {
 			.sort((a, b) => b.spent - a.spent);
 	}, [budgets, transactions, month]);
 
+	/** Average monthly spend per category over the 3 months before this one,
+	 *  counting only months that have any spending (so new accounts aren't
+	 *  dragged toward zero). */
+	const averages = useMemo(() => {
+		const out = new Map<string, number>();
+		if (!transactions) return out;
+		const months = [1, 2, 3]
+			.map((i) => spentByCategory(transactions, shiftMonth(month, -i)))
+			.filter((m) => m.size > 0);
+		if (months.length === 0) return out;
+		for (const m of months)
+			for (const [key, v] of m) out.set(key, (out.get(key) ?? 0) + v);
+		for (const [key, v] of out) out.set(key, v / months.length);
+		return out;
+	}, [transactions, month]);
+
 	if (!budgets || !transactions || !progress) return <PageSkeleton tiles={2} />;
 
 	const isCurrent = month === thisMonth;
@@ -174,7 +190,7 @@ export default function Budget() {
 									"h-full rounded-full transition-[width] duration-700",
 									progress.remaining < 0
 										? "bg-amber-500"
-										: "bg-linear-to-r from-brand-red to-brand-pink",
+										: "bg-emerald-500 dark:bg-emerald-400",
 								)}
 								style={{ width: `${Math.min(100, progress.pct)}%` }}
 							/>
@@ -185,97 +201,100 @@ export default function Budget() {
 					</section>
 
 					<section aria-label="Budget categories">
-						<div className="card overflow-hidden">
-							<div
-								aria-hidden
-								className="hidden grid-cols-[minmax(0,14rem)_minmax(0,1fr)_7rem_7rem] gap-6 border-b border-zinc-100 bg-zinc-50/60 px-6 py-2 text-xs font-medium text-zinc-500 sm:grid dark:border-zinc-800 dark:bg-zinc-800/30 dark:text-zinc-400"
-							>
-								<span>Category</span>
-								<span>Progress</span>
-								<span className="text-right">Spent</span>
-								<span className="text-right">Left</span>
-							</div>
-							<ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-								{progress.items.map((item) => {
-									const Icon = iconFor(BUDGET_ICONS, item.icon);
-									return (
-										<li
-											key={item._id}
-											className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2.5 px-5 py-4 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_7rem_7rem] sm:gap-6 sm:px-6"
-										>
-											<div className="flex min-w-0 items-center gap-3">
-												<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white">
-													<Icon size={17} />
-												</span>
-												<div className="min-w-0">
-													<p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
-														{item.name}
-													</p>
-													<p className="text-xs text-zinc-500 tabular-nums dark:text-zinc-400">
-														{format(item.limit, { whole: true })} / month
-													</p>
-												</div>
-											</div>
+						<ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+							{progress.items.map((item) => {
+								const Icon = iconFor(BUDGET_ICONS, item.icon);
+								const avg = averages.get(item.name.trim().toLowerCase());
+								const usuallyOver = avg !== undefined && avg > item.limit;
+								return (
+									<li key={item._id} className="card p-5">
+										<div className="flex items-center gap-3">
+											<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white">
+												<Icon size={17} />
+											</span>
+											<p className="min-w-0 flex-1 truncate text-sm font-semibold text-zinc-900 dark:text-white">
+												{item.name}
+											</p>
+											<span
+												className={cn(
+													"text-xs font-medium tabular-nums",
+													item.isOver
+														? "text-amber-700 dark:text-amber-400"
+														: "text-zinc-500 dark:text-zinc-400",
+												)}
+											>
+												{item.pct}%
+											</span>
+										</div>
 
-											{/* Phone: amounts sit beside the name, bar spans below. */}
-											<div className="text-right sm:order-last sm:contents">
-												<p
+										<p className="mt-4 tabular-nums">
+											<span
+												className={cn(
+													"text-xl font-semibold tracking-tight",
+													item.isOver
+														? "text-amber-700 dark:text-amber-400"
+														: "text-zinc-900 dark:text-white",
+												)}
+											>
+												{format(item.spent)}
+											</span>
+											<span className="text-sm text-zinc-500 dark:text-zinc-400">
+												{" "}
+												of {format(item.limit, { whole: true })}
+											</span>
+										</p>
+
+										<div
+											className="mt-3 h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
+											role="progressbar"
+											aria-valuenow={item.pct}
+											aria-valuemin={0}
+											aria-valuemax={100}
+											aria-label={`${item.name}: ${item.pct}% of budget used`}
+										>
+											<div
+												className={cn(
+													"h-full rounded-full transition-[width] duration-700",
+													item.isOver
+														? "bg-amber-500"
+														: "bg-sky-500 dark:bg-sky-400",
+												)}
+												style={{ width: `${Math.min(100, item.pct)}%` }}
+											/>
+										</div>
+
+										<div className="mt-3 flex items-center justify-between gap-3 text-xs tabular-nums">
+											{item.isOver ? (
+												<span className="inline-flex items-center gap-1 font-medium text-amber-700 dark:text-amber-400">
+													<AlertTriangle size={12} />
+													{format(-item.remaining)} over
+												</span>
+											) : (
+												<span className="text-zinc-500 dark:text-zinc-400">
+													{format(item.remaining)} left
+												</span>
+											)}
+											{avg !== undefined && (
+												<span
 													className={cn(
-														"text-sm font-semibold tabular-nums sm:order-3 sm:text-right",
-														item.isOver
+														usuallyOver
 															? "text-amber-700 dark:text-amber-400"
-															: "text-zinc-900 dark:text-white",
-													)}
-												>
-													{format(item.spent)}
-												</p>
-												<p
-													className={cn(
-														"text-xs tabular-nums sm:order-4 sm:text-right sm:text-sm",
-														item.isOver
-															? "font-medium text-amber-700 dark:text-amber-400"
 															: "text-zinc-500 dark:text-zinc-400",
 													)}
+													title={
+														usuallyOver
+															? "Your 3-month average is above this limit"
+															: "Average monthly spend over the last 3 months"
+													}
 												>
-													{item.isOver ? (
-														<span className="inline-flex items-center gap-1">
-															<AlertTriangle size={12} />
-															{format(-item.remaining)} over
-														</span>
-													) : (
-														<>
-															{format(item.remaining)}
-															<span className="sm:hidden"> left</span>
-														</>
-													)}
-												</p>
-											</div>
-
-											<div
-												className="col-span-2 sm:order-2 sm:col-span-1"
-												role="progressbar"
-												aria-valuenow={item.pct}
-												aria-valuemin={0}
-												aria-valuemax={100}
-												aria-label={`${item.name}: ${item.pct}% of budget used`}
-											>
-												<div className="h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
-													<div
-														className={cn(
-															"h-full rounded-full transition-[width] duration-700",
-															item.isOver
-																? "bg-amber-500"
-																: "bg-emerald-500 dark:bg-emerald-400",
-														)}
-														style={{ width: `${Math.min(100, item.pct)}%` }}
-													/>
-												</div>
-											</div>
-										</li>
-									);
-								})}
-							</ul>
-						</div>
+													Avg {format(avg, { whole: true })}/mo
+												</span>
+											)}
+										</div>
+									</li>
+								);
+							})}
+						</ul>
 					</section>
 
 					{unbudgeted.length > 0 && (

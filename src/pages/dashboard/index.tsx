@@ -1,7 +1,5 @@
 import {
-	ArrowDownLeft,
 	ArrowRight,
-	ArrowUpRight,
 	Plus,
 	TrendingDown,
 	TrendingUp,
@@ -37,13 +35,13 @@ import {
 	todayIso,
 } from "@/shared/lib/finance";
 import { formatPercent } from "@/shared/lib/money";
-import { BRAND_GRADIENT } from "@/shared/lib/tints";
 import TransactionModal from "../transactions/TransactionModal";
 import {
 	Amount,
 	formatDate,
 	TypeIcon,
 } from "../transactions/TransactionsTable";
+import { CashFlowChart } from "./CashFlowChart";
 import { Onboarding } from "./Onboarding";
 
 function greeting() {
@@ -89,7 +87,7 @@ function Stat({
 
 function Progress({
 	value,
-	color = BRAND_GRADIENT,
+	color = "bg-sky-500 dark:bg-sky-400",
 	over,
 }: {
 	value: number;
@@ -154,7 +152,6 @@ export default function Dashboard() {
 	const showOnboarding =
 		!viewer.settings.onboardingDismissed &&
 		!(accounts.length && transactions.length && budgets.length && goals.length);
-	const maxBar = Math.max(1, ...series.flatMap((m) => [m.income, m.expense]));
 
 	const openNew = () => {
 		setEditing(null);
@@ -276,7 +273,7 @@ export default function Dashboard() {
 				>
 					{topGoal ? (
 						<>
-							<Progress value={topGoal.pct} color="bg-emerald-500" />
+							<Progress value={topGoal.pct} color="bg-emerald-500 dark:bg-emerald-400" />
 							<p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
 								{topGoal.pct}% · {format(topGoal.remaining, { whole: true })} to
 								go
@@ -342,51 +339,32 @@ export default function Dashboard() {
 
 				<div className="grid gap-4 xl:col-span-2">
 					<Card>
-						<CardHeader title="Cash flow" description="This month so far" />
-						<div className="grid grid-cols-2 gap-3">
-							<div className="rounded-xl bg-emerald-50 p-3 dark:bg-emerald-500/10">
-								<p className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
-									<ArrowDownLeft size={14} /> Income
-								</p>
-								<p className="mt-1 truncate text-lg font-semibold text-zinc-900 tabular-nums dark:text-white">
-									{format(summary.month.income)}
-								</p>
-							</div>
-							<div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800">
-								<p className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
-									<ArrowUpRight size={14} /> Spending
-								</p>
-								<p className="mt-1 truncate text-lg font-semibold text-zinc-900 tabular-nums dark:text-white">
-									{format(summary.month.expense)}
+						<div className="mb-4 flex items-start justify-between gap-4">
+							<div>
+								<h2 className="font-semibold text-zinc-900 dark:text-white">
+									Cash flow
+								</h2>
+								<p className="text-sm text-zinc-500 dark:text-zinc-400">
+									Last 6 months
 								</p>
 							</div>
-						</div>
-						<div
-							className="mt-5 flex h-24 items-end gap-2"
-							aria-label="Income and spending, last 6 months"
-							role="img"
-						>
-							{series.map((m) => (
-								<div
-									key={m.key}
-									className="flex flex-1 flex-col items-center gap-1.5"
+							<div className="text-right">
+								<p
+									className={cn(
+										"text-lg font-semibold tracking-tight tabular-nums",
+										summary.month.net < 0
+											? "text-amber-700 dark:text-amber-400"
+											: "text-zinc-900 dark:text-white",
+									)}
 								>
-									<div className="flex h-20 w-full items-end justify-center gap-0.5">
-										<div
-											className="w-1/2 max-w-3 rounded-t bg-emerald-400 dark:bg-emerald-500"
-											style={{ height: `${(m.income / maxBar) * 100}%` }}
-											title={`${m.label} income ${format(m.income)}`}
-										/>
-										<div
-											className="w-1/2 max-w-3 rounded-t bg-zinc-300 dark:bg-zinc-600"
-											style={{ height: `${(m.expense / maxBar) * 100}%` }}
-											title={`${m.label} spending ${format(m.expense)}`}
-										/>
-									</div>
-									<span className="text-[11px] text-zinc-400">{m.label}</span>
-								</div>
-							))}
+									{format(summary.month.net, { sign: true })}
+								</p>
+								<p className="text-xs text-zinc-500 dark:text-zinc-400">
+									net this month
+								</p>
+							</div>
 						</div>
+						<CashFlowChart series={series} format={(n) => format(n)} />
 					</Card>
 					<Card>
 						<CardHeader title="Heads up" />
