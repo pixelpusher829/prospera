@@ -101,7 +101,7 @@ export default function Sidebar({
 			{isMobileOpen && (
 				<div
 					aria-hidden
-					className="fixed inset-0 z-40 animate-fade-in bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
+					className="fixed inset-0 z-40 animate-fade-in bg-zinc-950/40 backdrop-blur-[2px] lg:hidden"
 					onClick={() => setIsMobileOpen(false)}
 				/>
 			)}
@@ -109,7 +109,7 @@ export default function Sidebar({
 				id="app-sidebar"
 				aria-label="Main navigation"
 				className={cn(
-					"fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-slate-200 bg-white transition-[transform,width,visibility] duration-300 ease-out dark:border-slate-800 dark:bg-slate-900",
+					"fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-zinc-200/70 bg-canvas transition-[transform,width,visibility] duration-300 ease-out dark:border-zinc-800 dark:bg-zinc-950",
 					// The drawer sits outside the shell's safe-area padding.
 					"pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]",
 					"lg:visible lg:static lg:z-auto lg:max-w-none lg:translate-x-0 lg:p-0",
@@ -129,7 +129,7 @@ export default function Sidebar({
 					<img src={logo} alt="" className="h-7 w-auto" />
 					<span
 						className={cn(
-							"text-xl font-bold tracking-tight text-slate-900 dark:text-white",
+							"font-display text-xl font-bold tracking-tight text-zinc-950 dark:text-white",
 							isCollapsed && "sr-only",
 						)}
 					>
@@ -138,7 +138,7 @@ export default function Sidebar({
 					<button
 						type="button"
 						onClick={() => setIsMobileOpen(false)}
-						className="ml-auto rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden dark:hover:bg-slate-800"
+						className="ml-auto rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 lg:hidden dark:hover:bg-zinc-800"
 						aria-label="Close menu"
 					>
 						<X size={20} />
@@ -149,7 +149,7 @@ export default function Sidebar({
 					{NAV_ITEMS.map(link)}
 				</nav>
 
-				<div className="space-y-1 border-t border-slate-100 px-3 py-3 dark:border-slate-800">
+				<div className="space-y-1 border-t border-zinc-100 px-3 py-3 dark:border-zinc-800">
 					{FOOTER_ITEMS.map(link)}
 					<button
 						type="button"

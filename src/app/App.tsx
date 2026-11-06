@@ -39,7 +39,7 @@ function Splash({ message }: { message?: string }) {
 			<img src={logo} alt="" className="h-10 w-auto animate-pulse" />
 			<p
 				aria-live="polite"
-				className="text-sm text-slate-500 dark:text-slate-400"
+				className="text-sm text-zinc-500 dark:text-zinc-400"
 			>
 				{message ?? "Loading Prospera…"}
 			</p>
@@ -82,7 +82,7 @@ function Shell() {
 		<div className="flex h-dvh overflow-hidden pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
 			<a
 				href="#main"
-				className="sr-only z-[100] rounded-lg bg-violet-600 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+				className="sr-only z-[100] rounded-lg bg-zinc-900 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
 			>
 				Skip to content
 			</a>
@@ -146,10 +146,10 @@ function DemoUnavailable({ onRetry }: { onRetry: () => void }) {
 		<div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
 			<img src={logo} alt="" className="h-10 w-auto" />
 			<div>
-				<h1 className="text-lg font-semibold text-slate-900 dark:text-white">
+				<h1 className="text-lg font-semibold text-zinc-900 dark:text-white">
 					The demo couldn't start
 				</h1>
-				<p className="mt-1 max-w-sm text-sm text-slate-500 dark:text-slate-400">
+				<p className="mt-1 max-w-sm text-sm text-zinc-500 dark:text-zinc-400">
 					This is usually a temporary connection problem. Give it another try.
 				</p>
 			</div>

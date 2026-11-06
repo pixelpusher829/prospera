@@ -204,17 +204,17 @@ export default function ImportModal({
 						if (file) loadFile(file);
 					}}
 					className={cn(
-						"flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-14 text-center transition-colors focus-within:border-violet-500",
+						"flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-14 text-center transition-colors focus-within:border-zinc-900 dark:focus-within:border-zinc-300",
 						dragging
-							? "border-violet-500 bg-violet-50 dark:bg-violet-500/10"
-							: "border-slate-300 hover:border-violet-400 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50",
+							? "border-zinc-900 bg-zinc-50 dark:border-zinc-300 dark:bg-zinc-800/50"
+							: "border-zinc-300 hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800/50",
 					)}
 				>
-					<FileUp className="mb-3 text-violet-500" size={32} />
-					<span className="font-medium text-slate-900 dark:text-white">
+					<FileUp className="mb-3 text-zinc-400" size={32} />
+					<span className="font-medium text-zinc-900 dark:text-white">
 						Drop a CSV here or click to browse
 					</span>
-					<span className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+					<span className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
 						We'll detect the columns. Nothing is saved until you confirm.
 					</span>
 					<input
@@ -231,15 +231,15 @@ export default function ImportModal({
 				</label>
 			) : (
 				<div className="space-y-6">
-					<p className="text-sm text-slate-600 dark:text-slate-300">
-						<span className="font-medium text-slate-900 dark:text-white">
+					<p className="text-sm text-zinc-600 dark:text-zinc-300">
+						<span className="font-medium text-zinc-900 dark:text-white">
 							{fileName}
 						</span>{" "}
 						· {table.rows.length} row{table.rows.length === 1 ? "" : "s"}
 					</p>
 
 					<section className="space-y-4">
-						<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+						<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 							1. Match the columns
 						</h3>
 						<div className="grid gap-4 sm:grid-cols-2">
@@ -282,7 +282,7 @@ export default function ImportModal({
 					</section>
 
 					<section className="space-y-4">
-						<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+						<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 							2. Choose an account
 						</h3>
 						<SelectField
@@ -307,7 +307,7 @@ export default function ImportModal({
 					</section>
 
 					<section className="space-y-3">
-						<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+						<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 							3. Check the preview
 						</h3>
 						{!isMappingComplete(mapping) ? (
@@ -327,9 +327,9 @@ export default function ImportModal({
 										</span>
 									)}
 								</div>
-								<div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+								<div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
 									<table className="w-full text-left text-sm">
-										<thead className="bg-slate-50 text-xs text-slate-500 uppercase dark:bg-slate-800/60 dark:text-slate-400">
+										<thead className="bg-zinc-50 text-xs text-zinc-500 uppercase dark:bg-zinc-800/60 dark:text-zinc-400">
 											<tr>
 												<th className="px-3 py-2 font-medium">Row</th>
 												<th className="px-3 py-2 font-medium">Date</th>
@@ -340,13 +340,11 @@ export default function ImportModal({
 												</th>
 											</tr>
 										</thead>
-										<tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+										<tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
 											{results.slice(0, PREVIEW_ROWS).map((r) =>
 												r.ok ? (
 													<tr key={r.row}>
-														<td className="px-3 py-2 text-slate-400">
-															{r.row}
-														</td>
+														<td className="px-3 py-2 text-zinc-400">{r.row}</td>
 														<td className="px-3 py-2 whitespace-nowrap tabular-nums">
 															{r.value.date}
 														</td>
@@ -374,9 +372,7 @@ export default function ImportModal({
 														key={r.row}
 														className="bg-amber-50/60 dark:bg-amber-500/5"
 													>
-														<td className="px-3 py-2 text-slate-400">
-															{r.row}
-														</td>
+														<td className="px-3 py-2 text-zinc-400">{r.row}</td>
 														<td
 															colSpan={4}
 															className="px-3 py-2 text-amber-700 dark:text-amber-400"
@@ -390,7 +386,7 @@ export default function ImportModal({
 									</table>
 								</div>
 								{results.length > PREVIEW_ROWS && (
-									<p className="text-xs text-slate-500 dark:text-slate-400">
+									<p className="text-xs text-zinc-500 dark:text-zinc-400">
 										Showing the first {PREVIEW_ROWS} of {results.length} rows.
 									</p>
 								)}
@@ -398,7 +394,7 @@ export default function ImportModal({
 						)}
 						{progress !== null && (
 							<div
-								className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+								className="h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
 								role="progressbar"
 								aria-valuenow={Math.round(progress * 100)}
 								aria-valuemin={0}
@@ -406,7 +402,7 @@ export default function ImportModal({
 								aria-label="Import progress"
 							>
 								<div
-									className="h-full rounded-full bg-violet-600 transition-[width]"
+									className="h-full rounded-full bg-zinc-900 transition-[width] dark:bg-zinc-200"
 									style={{ width: `${Math.max(5, progress * 100)}%` }}
 								/>
 							</div>

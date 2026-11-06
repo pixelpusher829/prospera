@@ -43,6 +43,7 @@ import {
 	todayIso,
 } from "@/shared/lib/finance";
 import { formatPercent } from "@/shared/lib/money";
+import { TINTS, type Tint } from "@/shared/lib/tints";
 import { LoadDemoButton } from "../dashboard/Onboarding";
 import AiAdvisor from "./AiAdvisor";
 import { CATEGORY_COLORS, useChartTheme } from "./chartTheme";
@@ -54,7 +55,9 @@ function StatCard({
 	goodWhenUp,
 	detail,
 	icon: Icon,
+	tint = "icon",
 }: {
+	tint?: Tint;
 	label: string;
 	value: string;
 	change: number | null;
@@ -67,24 +70,29 @@ function StatCard({
 	return (
 		<Card className="flex flex-col justify-between gap-4">
 			<div className="flex items-center justify-between">
-				<span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+				<span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
 					{label}
 				</span>
-				<span className="flex size-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+				<span
+					className={cn(
+						"flex size-9 items-center justify-center rounded-xl",
+						TINTS[tint],
+					)}
+				>
 					<Icon size={18} />
 				</span>
 			</div>
 			<div>
-				<p className="truncate text-3xl font-bold tracking-tight text-slate-900 tabular-nums dark:text-white">
+				<p className="truncate font-display text-2xl font-bold tracking-tight text-zinc-900 tabular-nums dark:text-white">
 					{value}
 				</p>
-				<p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+				<p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
 					{change !== null && (
 						<span
 							className={cn(
 								"rounded-md px-1.5 py-0.5 text-xs font-semibold",
 								good === null &&
-									"bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+									"bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300",
 								good === true &&
 									"bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
 								good === false &&
@@ -234,6 +242,7 @@ export default function Analytics() {
 					change={summary.incomeChange}
 					goodWhenUp
 					icon={ArrowDownLeft}
+					tint="emerald"
 					detail={`${summary.month.incomeCount} deposit${summary.month.incomeCount === 1 ? "" : "s"} · ${format(summary.previousToDate.income, { compact: true })} by now last month`}
 				/>
 				<StatCard
@@ -264,13 +273,17 @@ export default function Analytics() {
 										<stop
 											offset="0%"
 											stopColor={chart.line}
-											stopOpacity={0.25}
+											stopOpacity={0.16}
 										/>
 										<stop
 											offset="100%"
 											stopColor={chart.line}
 											stopOpacity={0}
 										/>
+									</linearGradient>
+									<linearGradient id="nwStroke" x1="0" y1="0" x2="1" y2="0">
+										<stop offset="0%" stopColor="var(--color-brand-red)" />
+										<stop offset="100%" stopColor="var(--color-brand-pink)" />
 									</linearGradient>
 								</defs>
 								<CartesianGrid
@@ -301,10 +314,10 @@ export default function Analytics() {
 								<Area
 									type="monotone"
 									dataKey="value"
-									stroke={chart.line}
+									stroke="url(#nwStroke)"
 									strokeWidth={2.5}
 									fill="url(#nw)"
-									activeDot={{ r: 5 }}
+									activeDot={{ r: 5, fill: chart.line, strokeWidth: 0 }}
 								/>
 							</AreaChart>
 						</ResponsiveContainer>
@@ -331,17 +344,17 @@ export default function Analytics() {
 						}
 					/>
 					{breakdown.length === 0 ? (
-						<p className="flex flex-1 items-center justify-center py-10 text-sm text-slate-500 dark:text-slate-400">
+						<p className="flex flex-1 items-center justify-center py-10 text-sm text-zinc-500 dark:text-zinc-400">
 							No spending in {monthLabel(month, true)}.
 						</p>
 					) : (
 						<>
 							<div className="relative h-52">
 								<div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-									<span className="text-xs text-slate-500 dark:text-slate-400">
+									<span className="text-xs text-zinc-500 dark:text-zinc-400">
 										Spent
 									</span>
-									<span className="text-xl font-bold text-slate-900 tabular-nums dark:text-white">
+									<span className="text-xl font-semibold text-zinc-900 tabular-nums dark:text-white">
 										{format(breakdownTotal, { whole: breakdownTotal >= 10000 })}
 									</span>
 								</div>
@@ -382,13 +395,13 @@ export default function Analytics() {
 												background: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
 											}}
 										/>
-										<span className="min-w-0 flex-1 truncate text-slate-600 dark:text-slate-300">
+										<span className="min-w-0 flex-1 truncate text-zinc-600 dark:text-zinc-300">
 											{b.name}
 										</span>
-										<span className="text-slate-400 tabular-nums">
+										<span className="text-zinc-400 tabular-nums">
 											{b.share}%
 										</span>
-										<span className="w-24 text-right font-medium text-slate-900 tabular-nums dark:text-white">
+										<span className="w-24 text-right font-medium text-zinc-900 tabular-nums dark:text-white">
 											{format(b.value)}
 										</span>
 									</li>
@@ -443,7 +456,7 @@ export default function Analytics() {
 									iconType="circle"
 									iconSize={8}
 									formatter={(value) => (
-										<span className="text-sm text-slate-600 dark:text-slate-300">
+										<span className="text-sm text-zinc-600 dark:text-zinc-300">
 											{value === "income" ? "Income" : "Spending"}
 										</span>
 									)}

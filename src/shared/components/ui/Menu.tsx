@@ -4,7 +4,7 @@ import type React from "react";
 import { cn } from "@/shared/lib/cn";
 
 const surface =
-	"z-50 min-w-44 max-w-[calc(100vw-1.5rem)] overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1 text-sm shadow-lg shadow-slate-900/5 outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40";
+	"z-50 min-w-44 max-w-[calc(100vw-1.5rem)] overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-zinc-200 bg-white p-1 text-sm shadow-lg shadow-zinc-900/5 outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-black/40";
 
 /** A dropdown of actions. `trigger` must be a single focusable element. */
 export function Menu({
@@ -60,7 +60,7 @@ export function MenuItem({
 				"flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 				danger
 					? "text-red-600 data-[highlighted]:bg-red-50 dark:text-red-400 dark:data-[highlighted]:bg-red-500/10"
-					: "text-slate-700 data-[highlighted]:bg-slate-100 dark:text-slate-200 dark:data-[highlighted]:bg-slate-800",
+					: "text-zinc-700 data-[highlighted]:bg-zinc-100 dark:text-zinc-200 dark:data-[highlighted]:bg-zinc-800",
 			)}
 		>
 			{icon && <span className="opacity-70 [&>svg]:size-4">{icon}</span>}
@@ -71,7 +71,7 @@ export function MenuItem({
 
 export function MenuLabel({ children }: { children: React.ReactNode }) {
 	return (
-		<Dropdown.Label className="px-2.5 pt-2 pb-1 text-xs font-medium text-slate-400 dark:text-slate-500">
+		<Dropdown.Label className="px-2.5 pt-2 pb-1 text-xs font-medium text-zinc-400 dark:text-zinc-500">
 			{children}
 		</Dropdown.Label>
 	);
@@ -79,7 +79,7 @@ export function MenuLabel({ children }: { children: React.ReactNode }) {
 
 export function MenuSeparator() {
 	return (
-		<Dropdown.Separator className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+		<Dropdown.Separator className="my-1 h-px bg-zinc-100 dark:bg-zinc-800" />
 	);
 }
 

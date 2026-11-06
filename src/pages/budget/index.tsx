@@ -129,30 +129,24 @@ export default function Budget() {
 				</EmptyState>
 			) : (
 				<>
-					<section
-						aria-label="Budget summary"
-						className="relative overflow-hidden rounded-2xl bg-slate-900 p-6 text-white shadow-lg shadow-slate-900/10 sm:p-8 dark:bg-linear-to-br dark:from-violet-600/25 dark:to-slate-900 dark:ring-1 dark:ring-violet-500/20"
-					>
-						<div className="absolute -top-20 -right-10 size-64 rounded-full bg-violet-500/20 blur-3xl" />
-						<div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+					<section aria-label="Budget summary" className="pt-2">
+						<div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
 							<div>
-								<p className="text-sm font-medium text-slate-300">
-									Spent in {monthLabel(month, true)}
-								</p>
-								<p className="mt-1 text-4xl font-bold tracking-tight tabular-nums">
+								<p className="eyebrow">Spent in {monthLabel(month, true)}</p>
+								<p className="hero-figure mt-3">
 									{format(progress.totalSpent)}
 								</p>
-								<p className="mt-1 text-sm text-slate-300">
+								<p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
 									of {format(progress.totalLimit)} budgeted
 								</p>
 							</div>
 							<div className="sm:text-right">
 								<p
 									className={cn(
-										"text-2xl font-semibold tabular-nums",
+										"text-xl font-semibold tracking-tight tabular-nums",
 										progress.remaining < 0
-											? "text-red-300"
-											: "text-emerald-300",
+											? "text-amber-700 dark:text-amber-400"
+											: "text-emerald-600 dark:text-emerald-400",
 									)}
 								>
 									{progress.remaining < 0
@@ -160,7 +154,7 @@ export default function Budget() {
 										: `${format(progress.remaining)} left`}
 								</p>
 								{isCurrent && progress.remaining > 0 && (
-									<p className="mt-1 text-sm text-slate-300">
+									<p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
 										About {format(perDay)} a day for the next {daysLeft} day
 										{daysLeft === 1 ? "" : "s"}
 									</p>
@@ -168,7 +162,7 @@ export default function Budget() {
 							</div>
 						</div>
 						<div
-							className="relative mt-6 h-3 overflow-hidden rounded-full bg-white/10"
+							className="mt-8 h-2.5 overflow-hidden rounded-full bg-zinc-200/80 dark:bg-zinc-800"
 							role="progressbar"
 							aria-valuenow={progress.pct}
 							aria-valuemin={0}
@@ -179,108 +173,119 @@ export default function Budget() {
 								className={cn(
 									"h-full rounded-full transition-[width] duration-700",
 									progress.remaining < 0
-										? "bg-red-400"
-										: "bg-linear-to-r from-violet-400 to-fuchsia-400",
+										? "bg-amber-500"
+										: "bg-linear-to-r from-brand-red to-brand-pink",
 								)}
 								style={{ width: `${Math.min(100, progress.pct)}%` }}
 							/>
 						</div>
-						<p className="relative mt-2 text-sm text-slate-300">
+						<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
 							{progress.pct}% used
 						</p>
 					</section>
 
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-						{progress.items.map((item) => {
-							const Icon = iconFor(BUDGET_ICONS, item.icon);
-							return (
-								<Card key={item._id} className="flex flex-col gap-4">
-									<div className="flex items-start justify-between gap-3">
-										<div className="flex min-w-0 items-center gap-3">
-											<span
-												className="flex size-11 shrink-0 items-center justify-center rounded-xl"
-												style={{
-													background: `${item.color}1f`,
-													color: item.color,
-												}}
-											>
-												<Icon size={20} />
-											</span>
-											<div className="min-w-0">
-												<h3 className="truncate font-semibold text-slate-900 dark:text-white">
-													{item.name}
-												</h3>
-												<p className="text-xs text-slate-500 dark:text-slate-400">
-													{format(item.limit)} / month
+					<section aria-label="Budget categories">
+						<div className="card overflow-hidden">
+							<div
+								aria-hidden
+								className="hidden grid-cols-[minmax(0,14rem)_minmax(0,1fr)_7rem_7rem] gap-6 border-b border-zinc-100 bg-zinc-50/60 px-6 py-2 text-xs font-medium text-zinc-500 sm:grid dark:border-zinc-800 dark:bg-zinc-800/30 dark:text-zinc-400"
+							>
+								<span>Category</span>
+								<span>Progress</span>
+								<span className="text-right">Spent</span>
+								<span className="text-right">Left</span>
+							</div>
+							<ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+								{progress.items.map((item) => {
+									const Icon = iconFor(BUDGET_ICONS, item.icon);
+									return (
+										<li
+											key={item._id}
+											className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2.5 px-5 py-4 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_7rem_7rem] sm:gap-6 sm:px-6"
+										>
+											<div className="flex min-w-0 items-center gap-3">
+												<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white">
+													<Icon size={17} />
+												</span>
+												<div className="min-w-0">
+													<p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
+														{item.name}
+													</p>
+													<p className="text-xs text-zinc-500 tabular-nums dark:text-zinc-400">
+														{format(item.limit, { whole: true })} / month
+													</p>
+												</div>
+											</div>
+
+											{/* Phone: amounts sit beside the name, bar spans below. */}
+											<div className="text-right sm:order-last sm:contents">
+												<p
+													className={cn(
+														"text-sm font-semibold tabular-nums sm:order-3 sm:text-right",
+														item.isOver
+															? "text-amber-700 dark:text-amber-400"
+															: "text-zinc-900 dark:text-white",
+													)}
+												>
+													{format(item.spent)}
+												</p>
+												<p
+													className={cn(
+														"text-xs tabular-nums sm:order-4 sm:text-right sm:text-sm",
+														item.isOver
+															? "font-medium text-amber-700 dark:text-amber-400"
+															: "text-zinc-500 dark:text-zinc-400",
+													)}
+												>
+													{item.isOver ? (
+														<span className="inline-flex items-center gap-1">
+															<AlertTriangle size={12} />
+															{format(-item.remaining)} over
+														</span>
+													) : (
+														<>
+															{format(item.remaining)}
+															<span className="sm:hidden"> left</span>
+														</>
+													)}
 												</p>
 											</div>
-										</div>
-										<span
-											className={cn(
-												"text-lg font-bold tabular-nums",
-												item.isOver
-													? "text-red-600 dark:text-red-400"
-													: "text-slate-900 dark:text-white",
-											)}
-										>
-											{format(item.spent)}
-										</span>
-									</div>
-									<div>
-										<div
-											className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
-											role="progressbar"
-											aria-valuenow={item.pct}
-											aria-valuemin={0}
-											aria-valuemax={100}
-											aria-label={`${item.name} budget used`}
-										>
+
 											<div
-												className={cn(
-													"h-full rounded-full transition-[width] duration-700",
-													item.isOver && "bg-red-500",
-												)}
-												style={{
-													width: `${Math.min(100, item.pct)}%`,
-													background: item.isOver ? undefined : item.color,
-												}}
-											/>
-										</div>
-										<div className="mt-2 flex items-center justify-between text-xs font-medium">
-											<span
-												className={
-													item.isOver
-														? "text-red-600 dark:text-red-400"
-														: "text-slate-500 dark:text-slate-400"
-												}
+												className="col-span-2 sm:order-2 sm:col-span-1"
+												role="progressbar"
+												aria-valuenow={item.pct}
+												aria-valuemin={0}
+												aria-valuemax={100}
+												aria-label={`${item.name}: ${item.pct}% of budget used`}
 											>
-												{item.pct}%
-											</span>
-											{item.isOver ? (
-												<span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400">
-													<AlertTriangle size={12} /> {format(-item.remaining)}{" "}
-													over
-												</span>
-											) : (
-												<span className="text-slate-500 dark:text-slate-400">
-													{format(item.remaining)} left
-												</span>
-											)}
-										</div>
-									</div>
-								</Card>
-							);
-						})}
-					</div>
+												<div className="h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+													<div
+														className={cn(
+															"h-full rounded-full transition-[width] duration-700",
+															item.isOver
+																? "bg-amber-500"
+																: "bg-emerald-500 dark:bg-emerald-400",
+														)}
+														style={{ width: `${Math.min(100, item.pct)}%` }}
+													/>
+												</div>
+											</div>
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					</section>
 
 					{unbudgeted.length > 0 && (
 						<Card>
 							<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 								<div>
-									<h2 className="font-semibold text-slate-900 dark:text-white">
+									<h2 className="font-semibold text-zinc-900 dark:text-white">
 										Spending without a budget
 									</h2>
-									<p className="text-sm text-slate-500 dark:text-slate-400">
+									<p className="text-sm text-zinc-500 dark:text-zinc-400">
 										These categories had spending in {monthLabel(month, true)}{" "}
 										but no limit.
 									</p>
@@ -298,7 +303,7 @@ export default function Budget() {
 									<li key={u.name}>
 										<Link
 											to="/transactions"
-											className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+											className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
 										>
 											{u.name}
 											<span className="font-semibold tabular-nums">

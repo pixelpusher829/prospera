@@ -1,13 +1,6 @@
-import {
-	Plus,
-	ShieldCheck,
-	TrendingDown,
-	TrendingUp,
-	Wallet as WalletIcon,
-} from "lucide-react";
+import { Plus, ShieldCheck, Wallet as WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import Button from "@/shared/components/Button";
-import { Card } from "@/shared/components/ui/Card";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import { PageSkeleton } from "@/shared/components/ui/Skeleton";
 import {
@@ -49,10 +42,9 @@ function CreditCardTile({
 			<div
 				className={cn(
 					"@container relative flex aspect-[1.586] flex-col justify-between overflow-hidden rounded-2xl bg-linear-to-br p-5 text-white shadow-lg transition-transform group-hover:-translate-y-1",
-					account.colorTheme ?? "from-slate-700 to-slate-950",
+					account.colorTheme ?? "from-zinc-700 to-zinc-950",
 				)}
 			>
-				<div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/10 blur-2xl" />
 				<div className="relative flex items-start justify-between">
 					<span className="text-xs font-semibold tracking-wider uppercase opacity-80">
 						{account.institution || account.name}
@@ -82,10 +74,10 @@ function CreditCardTile({
 				</div>
 			</div>
 			<div className="mt-2 flex items-center justify-between gap-3 px-1 text-sm">
-				<span className="min-w-0 truncate text-slate-600 dark:text-slate-300">
+				<span className="min-w-0 truncate text-zinc-600 dark:text-zinc-300">
 					{account.name}
 				</span>
-				<span className="shrink-0 font-semibold text-slate-900 tabular-nums dark:text-white">
+				<span className="shrink-0 font-semibold text-zinc-900 tabular-nums dark:text-white">
 					{format(Math.max(0, -account.balance))} owed
 				</span>
 			</div>
@@ -119,7 +111,7 @@ function AccountRow({
 		<button
 			type="button"
 			onClick={onClick}
-			className="card flex w-full items-center gap-3 p-4 text-left sm:gap-4 transition-[border-color,box-shadow] hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700"
+			className="card flex w-full items-center gap-3 p-4 text-left sm:gap-4 transition-[border-color,box-shadow] hover:border-zinc-300 hover:shadow-sm dark:hover:border-zinc-700"
 		>
 			<span
 				className={cn(
@@ -127,31 +119,31 @@ function AccountRow({
 					invest?.tint ??
 						(info.liability
 							? "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"
-							: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"),
+							: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white"),
 				)}
 			>
 				<Icon size={20} />
 			</span>
 			<span className="min-w-0 flex-1">
-				<span className="block truncate font-semibold text-slate-900 dark:text-white">
+				<span className="block truncate font-semibold text-zinc-900 dark:text-white">
 					{account.name}
 				</span>
-				<span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+				<span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
 					{subtitle}
 				</span>
 			</span>
 			<span className="shrink-0 text-right">
 				<span
 					className={cn(
-						"block font-bold tabular-nums",
+						"block font-semibold tabular-nums",
 						account.balance < 0
 							? "text-red-600 dark:text-red-400"
-							: "text-slate-900 dark:text-white",
+							: "text-zinc-900 dark:text-white",
 					)}
 				>
 					{format(info.liability ? -account.balance : account.balance)}
 				</span>
-				<span className="text-xs text-slate-400">
+				<span className="text-xs text-zinc-400">
 					{info.liability ? "owed" : "balance"}
 				</span>
 			</span>
@@ -208,38 +200,31 @@ export default function Wallet() {
 				</EmptyState>
 			) : (
 				<>
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-						<div className="relative overflow-hidden rounded-2xl bg-slate-900 p-5 text-white shadow-lg shadow-slate-900/10 dark:bg-linear-to-br dark:from-violet-600/25 dark:to-slate-900 dark:ring-1 dark:ring-violet-500/20">
-							<div className="absolute -top-10 -right-10 size-40 rounded-full bg-brand-pink/20 blur-2xl" />
-							<p className="relative text-sm font-medium text-slate-300">
-								Net worth
-							</p>
-							<p className="relative mt-2 text-3xl font-bold tracking-tight tabular-nums">
-								{format(sheet.netWorth)}
-							</p>
-						</div>
-						<Card className="p-5 sm:p-5">
-							<p className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
-								<TrendingUp size={16} className="text-emerald-500" /> Assets
-							</p>
-							<p className="mt-2 text-2xl font-bold text-emerald-600 tabular-nums dark:text-emerald-400">
-								{format(sheet.assets)}
-							</p>
-						</Card>
-						<Card className="p-5 sm:p-5">
-							<p className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
-								<TrendingDown size={16} className="text-red-500" /> Debts
-							</p>
-							<p className="mt-2 text-2xl font-bold text-red-600 tabular-nums dark:text-red-400">
-								{format(sheet.liabilities)}
-							</p>
-						</Card>
-					</div>
+					<section aria-label="Balance sheet" className="pt-2">
+						<p className="eyebrow">Net worth</p>
+						<p className="hero-figure mt-3 truncate">
+							{format(sheet.netWorth)}
+						</p>
+						<dl className="mt-4 flex flex-wrap gap-x-8 gap-y-1 text-sm">
+							<div className="flex items-baseline gap-2">
+								<dt className="text-zinc-500 dark:text-zinc-400">Assets</dt>
+								<dd className="font-semibold text-zinc-900 tabular-nums dark:text-white">
+									{format(sheet.assets)}
+								</dd>
+							</div>
+							<div className="flex items-baseline gap-2">
+								<dt className="text-zinc-500 dark:text-zinc-400">Debts</dt>
+								<dd className="font-semibold text-zinc-900 tabular-nums dark:text-white">
+									{format(sheet.liabilities)}
+								</dd>
+							</div>
+						</dl>
+					</section>
 
 					<div
 						role="tablist"
 						aria-label="Filter accounts"
-						className="flex gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1 sm:w-fit dark:bg-slate-900"
+						className="flex gap-1 overflow-x-auto rounded-xl bg-zinc-100 p-1 sm:w-fit dark:bg-zinc-900"
 					>
 						{[{ id: "all", label: "All" }, ...GROUPS].map((g) => (
 							<button
@@ -251,8 +236,8 @@ export default function Wallet() {
 								className={cn(
 									"rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
 									filter === g.id
-										? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
-										: "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white",
+										? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-white"
+										: "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white",
 								)}
 							>
 								{g.label}
@@ -277,12 +262,12 @@ export default function Wallet() {
 									<div className="mb-3 flex items-baseline justify-between gap-4">
 										<h2
 											id={`group-${group.id}`}
-											className="text-lg font-semibold text-slate-900 dark:text-white"
+											className="text-lg font-semibold text-zinc-900 dark:text-white"
 										>
 											{group.label}
 										</h2>
 										{items.length > 0 && (
-											<span className="text-sm text-slate-500 tabular-nums dark:text-slate-400">
+											<span className="text-sm text-zinc-500 tabular-nums dark:text-zinc-400">
 												{format(Math.abs(total))}
 												{total < 0 ? " owed" : ""}
 											</span>
@@ -318,7 +303,7 @@ export default function Wallet() {
 											type="button"
 											onClick={() => openNew(group.addType)}
 											className={cn(
-												"flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 p-4 text-sm font-medium text-slate-500 transition-colors hover:border-violet-400 hover:bg-violet-50/50 hover:text-violet-700 dark:border-slate-800 dark:text-slate-400 dark:hover:border-violet-600 dark:hover:bg-violet-500/5 dark:hover:text-violet-300",
+												"flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-zinc-200 p-4 text-sm font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:bg-white hover:text-zinc-800 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-white",
 												isCards ? "aspect-[1.586]" : "min-h-[78px]",
 											)}
 										>

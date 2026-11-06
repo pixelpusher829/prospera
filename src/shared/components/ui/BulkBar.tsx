@@ -19,7 +19,7 @@ export function BulkBar({
 			<div
 				role="toolbar"
 				aria-label={`Actions for ${count} selected ${noun}`}
-				className="pointer-events-auto flex max-w-full animate-rise items-center gap-1 overflow-x-auto rounded-2xl bg-slate-900 p-1.5 pl-3 text-white sm:pl-4 shadow-2xl shadow-slate-900/30 ring-1 ring-white/10 dark:bg-slate-800"
+				className="pointer-events-auto flex max-w-full animate-rise items-center gap-1 overflow-x-auto rounded-2xl bg-zinc-900 p-1.5 pl-3 text-white sm:pl-4 shadow-2xl shadow-zinc-900/30 ring-1 ring-white/10 dark:bg-zinc-800"
 			>
 				<span
 					className="mr-1 text-sm font-medium whitespace-nowrap sm:mr-2"
@@ -32,7 +32,7 @@ export function BulkBar({
 				<button
 					type="button"
 					onClick={onClear}
-					className="ml-1 rounded-xl p-2.5 text-slate-300 sm:p-2 hover:bg-white/10 hover:text-white"
+					className="ml-1 rounded-xl p-2.5 text-zinc-300 sm:p-2 hover:bg-white/10 hover:text-white"
 					aria-label="Clear selection"
 				>
 					<X size={18} />
@@ -59,7 +59,7 @@ export function BulkButton({
 			className={
 				danger
 					? "inline-flex items-center gap-1.5 rounded-xl p-2.5 text-sm font-medium whitespace-nowrap text-red-300 sm:px-3 sm:py-2 hover:bg-red-500/20 hover:text-red-200 [&>svg]:size-4"
-					: "inline-flex items-center gap-1.5 rounded-xl p-2.5 text-sm font-medium whitespace-nowrap text-slate-200 sm:px-3 sm:py-2 hover:bg-white/10 hover:text-white [&>svg]:size-4"
+					: "inline-flex items-center gap-1.5 rounded-xl p-2.5 text-sm font-medium whitespace-nowrap text-zinc-200 sm:px-3 sm:py-2 hover:bg-white/10 hover:text-white [&>svg]:size-4"
 			}
 		>
 			{icon}

@@ -14,9 +14,9 @@ const badgeVariants = cva(
 				danger:
 					"bg-red-50 text-red-700 ring-red-600/15 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-400/20",
 				neutral:
-					"bg-slate-100 text-slate-600 ring-slate-500/15 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-400/20",
+					"bg-zinc-100 text-zinc-600 ring-zinc-500/15 dark:bg-zinc-800 dark:text-zinc-300 dark:ring-zinc-400/20",
 				brand:
-					"bg-violet-50 text-violet-700 ring-violet-600/15 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-400/20",
+					"bg-accent-50 text-accent-700 ring-accent-600/15 dark:bg-accent-500/10 dark:text-accent-300 dark:ring-accent-400/20",
 			},
 		},
 		defaultVariants: { tone: "neutral" },
@@ -27,8 +27,8 @@ const dotColor = {
 	success: "bg-emerald-500",
 	warning: "bg-amber-500",
 	danger: "bg-red-500",
-	neutral: "bg-slate-400",
-	brand: "bg-violet-500",
+	neutral: "bg-zinc-400",
+	brand: "bg-accent-500",
 };
 
 export function Badge({

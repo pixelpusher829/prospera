@@ -43,37 +43,37 @@ export const INVESTMENT_CATEGORIES: {
 		value: "stocks",
 		label: "Stocks & ETFs",
 		icon: LineChart,
-		tint: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-500/10",
+		tint: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white",
 	},
 	{
 		value: "crypto",
 		label: "Crypto",
 		icon: Bitcoin,
-		tint: "text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-500/10",
+		tint: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white",
 	},
 	{
 		value: "retirement",
 		label: "Retirement",
 		icon: Briefcase,
-		tint: "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/10",
+		tint: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white",
 	},
 	{
 		value: "real_estate",
 		label: "Real estate",
 		icon: Building2,
-		tint: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-500/10",
+		tint: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white",
 	},
 	{
 		value: "savings",
 		label: "High-yield savings",
 		icon: PiggyBank,
-		tint: "text-teal-600 bg-teal-50 dark:text-teal-400 dark:bg-teal-500/10",
+		tint: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white",
 	},
 	{
 		value: "other",
 		label: "Other",
 		icon: Globe,
-		tint: "text-slate-600 bg-slate-100 dark:text-slate-300 dark:bg-slate-800",
+		tint: "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white",
 	},
 ];
 

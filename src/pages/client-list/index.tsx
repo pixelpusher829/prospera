@@ -169,10 +169,10 @@ export default function ClientList() {
 				<span className="flex items-center gap-3">
 					<Avatar name={c.name} size="sm" />
 					<span className="min-w-0">
-						<span className="block max-w-56 truncate font-medium text-slate-900 dark:text-white">
+						<span className="block max-w-56 truncate font-medium text-zinc-900 dark:text-white">
 							{c.name}
 						</span>
-						<span className="block max-w-56 truncate text-xs text-slate-500 dark:text-slate-400">
+						<span className="block max-w-56 truncate text-xs text-zinc-500 dark:text-zinc-400">
 							{c.email}
 						</span>
 					</span>
@@ -182,10 +182,10 @@ export default function ClientList() {
 		{
 			header: "Company",
 			sortKey: "company",
-			className: "text-slate-600 dark:text-slate-300",
+			className: "text-zinc-600 dark:text-zinc-300",
 			cell: (c) =>
 				c.company || (
-					<span className="text-slate-300 dark:text-slate-600">—</span>
+					<span className="text-zinc-300 dark:text-zinc-600">—</span>
 				),
 		},
 		{
@@ -202,7 +202,7 @@ export default function ClientList() {
 							aria-label={`Status: ${c.status}. Change status`}
 						>
 							<StatusBadge status={c.status} />
-							<ChevronDown size={12} className="text-slate-400" />
+							<ChevronDown size={12} className="text-zinc-400" />
 						</button>
 					}
 				>
@@ -222,13 +222,13 @@ export default function ClientList() {
 			header: "Revenue",
 			sortKey: "revenue",
 			align: "right",
-			className: "font-semibold text-slate-900 tabular-nums dark:text-white",
+			className: "font-semibold text-zinc-900 tabular-nums dark:text-white",
 			cell: (c) => format(c.revenue, { whole: true }),
 		},
 		{
 			header: "Last contact",
 			sortKey: "lastContact",
-			className: "text-slate-500 dark:text-slate-400",
+			className: "text-zinc-500 dark:text-zinc-400",
 			cell: (c) => lastContact(c.lastContact),
 		},
 	];
@@ -285,7 +285,7 @@ export default function ClientList() {
 									<button
 										type="button"
 										onClick={() => setSearch("")}
-										className="rounded-md p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+										className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
 										aria-label="Clear search"
 									>
 										<X size={14} />
@@ -306,7 +306,7 @@ export default function ClientList() {
 								</SelectItem>
 							))}
 						</SelectField>
-						<p className="text-sm text-slate-500 sm:ml-auto dark:text-slate-400">
+						<p className="text-sm text-zinc-500 sm:ml-auto dark:text-zinc-400">
 							{totals.active} active · {format(totals.revenue, { whole: true })}{" "}
 							total revenue
 						</p>
@@ -350,10 +350,10 @@ export default function ClientList() {
 							<span className="flex items-center gap-3">
 								<Avatar name={c.name} size="sm" />
 								<span className="min-w-0 flex-1">
-									<span className="block truncate font-medium text-slate-900 dark:text-white">
+									<span className="block truncate font-medium text-zinc-900 dark:text-white">
 										{c.name}
 									</span>
-									<span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+									<span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
 										{c.company || c.email} · {lastContact(c.lastContact)}
 									</span>
 								</span>
@@ -368,7 +368,7 @@ export default function ClientList() {
 										variant="ghost"
 										size="icon-sm"
 										aria-label={`Actions for ${c.name}`}
-										className="text-slate-400 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+										className="text-zinc-400 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
 									>
 										<MoreHorizontal size={18} />
 									</Button>

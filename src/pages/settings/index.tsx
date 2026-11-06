@@ -71,7 +71,7 @@ function ProfileSection() {
 			>
 				<div className="flex items-center gap-4">
 					<Avatar name={trimmed || viewer.email} size="lg" />
-					<p className="text-sm text-slate-500 dark:text-slate-400">
+					<p className="text-sm text-zinc-500 dark:text-zinc-400">
 						Your avatar uses your initials.
 					</p>
 				</div>
@@ -134,7 +134,7 @@ function PreferencesSection() {
 					))}
 				</SelectField>
 				<fieldset>
-					<legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+					<legend className="mb-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200">
 						Theme
 					</legend>
 					<div className="grid grid-cols-3 gap-2 sm:max-w-sm">
@@ -147,8 +147,8 @@ function PreferencesSection() {
 								className={cn(
 									"flex flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-sm font-medium transition-colors",
 									preference === value
-										? "border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
-										: "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800",
+										? "border-zinc-900 bg-zinc-50 text-zinc-900 ring-1 ring-zinc-900 dark:border-zinc-200 dark:bg-zinc-800 dark:text-white dark:ring-zinc-200"
+										: "border-zinc-200 text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800",
 								)}
 							>
 								<Icon size={18} />
@@ -206,7 +206,7 @@ function SecuritySection() {
 					});
 				}}
 			>
-				<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+				<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 					Change password
 				</h3>
 				<InputField
@@ -236,12 +236,12 @@ function SecuritySection() {
 					</Button>
 				</div>
 			</form>
-			<div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
+			<div className="mt-6 flex flex-col gap-3 border-t border-zinc-100 pt-6 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
 				<div>
-					<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+					<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 						Other devices
 					</h3>
-					<p className="text-sm text-slate-500 dark:text-slate-400">
+					<p className="text-sm text-zinc-500 dark:text-zinc-400">
 						Signed in somewhere you don't recognise? Sign out everywhere else.
 					</p>
 				</div>
@@ -305,13 +305,13 @@ function DataSection() {
 				title="Your data"
 				description="It's yours. Take it with you or remove it whenever you like."
 			/>
-			<div className="divide-y divide-slate-100 dark:divide-slate-800">
+			<div className="divide-y divide-zinc-100 dark:divide-zinc-800">
 				<div className="flex flex-col gap-3 pb-5 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+						<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 							Download a backup
 						</h3>
-						<p className="text-sm text-slate-500 dark:text-slate-400">
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">
 							Everything in one JSON file: accounts, transactions, budgets,
 							goals and clients.
 						</p>
@@ -327,10 +327,10 @@ function DataSection() {
 				</div>
 				<div className="flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:justify-between">
 					<div>
-						<h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+						<h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
 							Reset workspace
 						</h3>
-						<p className="text-sm text-slate-500 dark:text-slate-400">
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">
 							Delete all financial data but keep your account. Handy after
 							trying the sample data.
 						</p>
@@ -345,7 +345,7 @@ function DataSection() {
 							<h3 className="text-sm font-semibold text-red-600 dark:text-red-400">
 								Delete account
 							</h3>
-							<p className="text-sm text-slate-500 dark:text-slate-400">
+							<p className="text-sm text-zinc-500 dark:text-zinc-400">
 								Permanently delete your account and everything in it.
 							</p>
 						</div>
@@ -385,11 +385,11 @@ function DataSection() {
 function GuestNotice() {
 	const openAuth = useOpenAuthScreen();
 	return (
-		<Card className="border-violet-200 bg-violet-50/60 dark:border-violet-500/30 dark:bg-violet-500/10">
-			<h2 className="font-semibold text-slate-900 dark:text-white">
+		<Card className="bg-zinc-50 dark:bg-zinc-900/60">
+			<h2 className="font-semibold text-zinc-900 dark:text-white">
 				You're using a guest workspace
 			</h2>
-			<p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+			<p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
 				It's filled with sample data so you can try everything. Guest workspaces
 				are removed after 7 days. Create an account to keep this workspace,
 				including any changes you've made, and sign in from any device.
@@ -425,7 +425,7 @@ export default function Settings() {
 				{/* Stays pinned while scrolling: a tab strip on phones, a list on desktop. */}
 				<nav
 					aria-label="Settings sections"
-					className="sticky top-0 z-10 -mx-4 bg-slate-50/90 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6 lg:top-6 lg:mx-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:bg-slate-950/90 lg:dark:bg-transparent"
+					className="sticky top-0 z-10 -mx-4 bg-zinc-50/90 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6 lg:top-6 lg:mx-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none dark:bg-zinc-950/90 lg:dark:bg-transparent"
 				>
 					<ul className="flex gap-1 overflow-x-auto lg:flex-col">
 						{sections.map((s) => (

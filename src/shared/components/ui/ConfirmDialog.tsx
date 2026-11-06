@@ -74,7 +74,7 @@ export function ConfirmDialog({
 				</>
 			}
 		>
-			<div className="text-sm text-slate-600 dark:text-slate-300">
+			<div className="text-sm text-zinc-600 dark:text-zinc-300">
 				{description}
 			</div>
 			{confirmText !== undefined && (

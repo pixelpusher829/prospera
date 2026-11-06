@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import Button from "@/shared/components/Button";
 import {
 	COLOR_PALETTE,
-	ColorPicker,
 	InputField,
 	MoneyField,
 } from "@/shared/components/forms";
@@ -112,7 +111,7 @@ export default function GoalModal({
 				{...form.field("deadline")}
 			/>
 			<fieldset>
-				<legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+				<legend className="mb-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200">
 					Icon
 				</legend>
 				<div className="flex flex-wrap gap-2">
@@ -126,8 +125,8 @@ export default function GoalModal({
 							className={cn(
 								"flex size-10 items-center justify-center rounded-xl border transition-colors",
 								form.values.icon === key
-									? "border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
-									: "border-slate-200 text-slate-500 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800",
+									? "border-zinc-900 bg-zinc-50 text-zinc-900 ring-1 ring-zinc-900 dark:border-zinc-200 dark:bg-zinc-800 dark:text-white dark:ring-zinc-200"
+									: "border-zinc-200 text-zinc-500 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800",
 							)}
 						>
 							<Icon size={18} />
@@ -135,10 +134,6 @@ export default function GoalModal({
 					))}
 				</div>
 			</fieldset>
-			<ColorPicker
-				value={form.values.color}
-				onChange={(c) => form.set("color", c)}
-			/>
 		</Modal>
 	);
 }

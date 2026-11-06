@@ -126,7 +126,7 @@ export function AuthDialog({
 					<button
 						type="button"
 						onClick={() => setShowPassword((s) => !s)}
-						className="rounded-md p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+						className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
 						aria-label={showPassword ? "Hide password" : "Show password"}
 					>
 						{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -142,7 +142,7 @@ export function AuthDialog({
 					{error}
 				</p>
 			)}
-			<p className="text-sm text-slate-500 dark:text-slate-400">
+			<p className="text-sm text-zinc-500 dark:text-zinc-400">
 				{isSignUp ? "Already have an account? " : "New here? "}
 				<button
 					type="button"

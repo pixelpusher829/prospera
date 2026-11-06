@@ -32,10 +32,10 @@ export class ErrorBoundary extends Component<Props, State> {
 					<div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400">
 						<TriangleAlert size={24} />
 					</div>
-					<h1 className="text-xl font-semibold text-slate-900 dark:text-white">
+					<h1 className="text-xl font-semibold text-zinc-900 dark:text-white">
 						Something went wrong
 					</h1>
-					<p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+					<p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
 						This part of the app hit an unexpected error. Your data is safe;
 						reloading usually fixes it.
 					</p>

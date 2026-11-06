@@ -109,10 +109,10 @@ export default function ClientSheet({
 			}
 		>
 			{client && (
-				<div className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4 dark:bg-slate-800/60">
+				<div className="flex items-center gap-4 rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800/60">
 					<Avatar name={form.values.name || client.name} size="lg" />
 					<div className="min-w-0">
-						<p className="truncate text-lg font-semibold text-slate-900 dark:text-white">
+						<p className="truncate text-lg font-semibold text-zinc-900 dark:text-white">
 							{form.values.name || client.name}
 						</p>
 						<div className="mt-1 flex flex-wrap items-center gap-2">

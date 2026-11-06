@@ -59,7 +59,7 @@ export default function SelectField({
 					aria-describedby={describedBy(id, error, hint)}
 					className={cn(
 						inputClass,
-						"flex cursor-pointer items-center justify-between gap-2 text-left data-[placeholder]:text-slate-400",
+						"flex cursor-pointer items-center justify-between gap-2 text-left data-[placeholder]:text-zinc-400",
 						error && invalidClass,
 						className,
 					)}
@@ -68,14 +68,14 @@ export default function SelectField({
 						<Select.Value placeholder={placeholder} />
 					</span>
 					<Select.Icon>
-						<ChevronDown size={16} className="shrink-0 text-slate-400" />
+						<ChevronDown size={16} className="shrink-0 text-zinc-400" />
 					</Select.Icon>
 				</Select.Trigger>
 				<Select.Portal>
 					<Select.Content
 						position="popper"
 						sideOffset={6}
-						className="z-[60] max-h-[min(var(--radix-select-content-available-height),20rem)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5 data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/40"
+						className="z-[60] max-h-[min(var(--radix-select-content-available-height),20rem)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg shadow-zinc-900/5 data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-black/40"
 					>
 						<Select.Viewport className="p-1">{children}</Select.Viewport>
 					</Select.Content>
@@ -98,13 +98,13 @@ export function SelectItem({
 		<Select.Item
 			value={value}
 			className={cn(
-				"relative flex cursor-pointer items-center rounded-lg py-2 pr-8 pl-2.5 text-sm text-slate-700 outline-none select-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-100 data-[disabled]:opacity-50 dark:text-slate-200 dark:data-[highlighted]:bg-slate-800",
+				"relative flex cursor-pointer items-center rounded-lg py-2 pr-8 pl-2.5 text-sm text-zinc-700 outline-none select-none data-[disabled]:pointer-events-none data-[highlighted]:bg-zinc-100 data-[disabled]:opacity-50 dark:text-zinc-200 dark:data-[highlighted]:bg-zinc-800",
 				className,
 			)}
 		>
 			<Select.ItemText>{children}</Select.ItemText>
 			<Select.ItemIndicator className="absolute right-2.5">
-				<Check size={14} className="text-violet-600 dark:text-violet-400" />
+				<Check size={14} className="text-zinc-900 dark:text-white" />
 			</Select.ItemIndicator>
 		</Select.Item>
 	);

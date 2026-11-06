@@ -46,7 +46,7 @@ export function Modal({
 				{children}
 			</div>
 			{footer && (
-				<div className="flex flex-col-reverse gap-2 border-t border-slate-100 bg-slate-50/70 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-end sm:px-6 dark:border-slate-800 dark:bg-slate-900/60">
+				<div className="flex flex-col-reverse gap-2 border-t border-zinc-100 bg-zinc-50/70 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-end sm:px-6 dark:border-zinc-800 dark:bg-zinc-900/60">
 					{footer}
 				</div>
 			)}
@@ -56,10 +56,10 @@ export function Modal({
 	return (
 		<Dialog.Root open={open} onOpenChange={onOpenChange}>
 			<Dialog.Portal>
-				<Dialog.Overlay className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-[2px] data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in dark:bg-black/60" />
+				<Dialog.Overlay className="fixed inset-0 z-50 bg-zinc-950/40 backdrop-blur-[2px] data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in dark:bg-black/60" />
 				<Dialog.Content
 					className={cn(
-						"fixed z-50 flex flex-col bg-white shadow-2xl outline-none dark:bg-slate-900 dark:ring-1 dark:ring-slate-800",
+						"fixed z-50 flex flex-col bg-white shadow-2xl outline-none dark:bg-zinc-900 dark:ring-1 dark:ring-zinc-800",
 						isSheet
 							? "inset-y-0 right-0 w-full pt-[env(safe-area-inset-top)] data-[state=closed]:animate-sheet-out data-[state=open]:animate-sheet-in sm:max-w-md"
 							: cn(
@@ -69,15 +69,15 @@ export function Modal({
 								),
 					)}
 				>
-					<div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 sm:px-6 dark:border-slate-800">
+					<div className="flex items-start justify-between gap-4 border-b border-zinc-100 px-5 py-4 sm:px-6 dark:border-zinc-800">
 						<div className="min-w-0">
-							<Dialog.Title className="text-lg font-semibold text-slate-900 dark:text-white">
+							<Dialog.Title className="text-lg font-semibold text-zinc-900 dark:text-white">
 								{title}
 							</Dialog.Title>
 							<Dialog.Description
 								className={
 									description
-										? "mt-0.5 text-sm text-slate-500 dark:text-slate-400"
+										? "mt-0.5 text-sm text-zinc-500 dark:text-zinc-400"
 										: "sr-only"
 								}
 							>
@@ -85,7 +85,7 @@ export function Modal({
 							</Dialog.Description>
 						</div>
 						<Dialog.Close
-							className="-mr-2 rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
+							className="-mr-2 rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-white"
 							aria-label="Close"
 						>
 							<X size={18} />

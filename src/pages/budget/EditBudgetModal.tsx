@@ -5,7 +5,6 @@ import { useEffect, useId, useState } from "react";
 import Button from "@/shared/components/Button";
 import {
 	COLOR_PALETTE,
-	ColorPicker,
 	InputField,
 	MoneyField,
 } from "@/shared/components/forms";
@@ -163,7 +162,7 @@ export default function EditBudgetModal({
 			onSubmit={submit}
 			footer={
 				<>
-					<span className="text-sm text-slate-500 sm:mr-auto dark:text-slate-400">
+					<span className="text-sm text-zinc-500 sm:mr-auto dark:text-zinc-400">
 						Total {symbol}
 						{total.toLocaleString(undefined, { maximumFractionDigits: 2 })} /
 						month
@@ -183,7 +182,7 @@ export default function EditBudgetModal({
 				))}
 			</datalist>
 			{rows.length === 0 && (
-				<p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600 dark:bg-slate-800/50 dark:text-slate-300">
+				<p className="rounded-xl bg-zinc-50 p-4 text-sm text-zinc-600 dark:bg-zinc-800/50 dark:text-zinc-300">
 					Add a category for each kind of spending you want to keep an eye on.
 				</p>
 			)}
@@ -194,24 +193,23 @@ export default function EditBudgetModal({
 					return (
 						<li
 							key={row.key}
-							className="grid grid-cols-[auto_1fr_auto] items-start gap-2 rounded-xl border border-slate-200 p-3 sm:grid-cols-[auto_1fr_10rem_auto] dark:border-slate-800"
+							className="grid grid-cols-[auto_1fr_auto] items-start gap-2 rounded-xl border border-zinc-200 p-3 sm:grid-cols-[auto_1fr_10rem_auto] dark:border-zinc-800"
 						>
 							<Popover
 								align="start"
-								className="w-64 space-y-4"
+								className="w-64"
 								trigger={
 									<button
 										type="button"
-										className="flex size-11 items-center justify-center rounded-xl transition-transform hover:scale-105 sm:size-10"
-										style={{ background: `${row.color}22`, color: row.color }}
-										aria-label={`Icon and colour for ${row.name || "new category"}`}
+										className="flex size-11 items-center justify-center rounded-xl border border-zinc-300 bg-white text-zinc-900 shadow-[0_1px_2px_rgb(9_9_11/0.05)] dark:border-zinc-600 dark:bg-zinc-800 dark:text-white transition-colors hover:bg-zinc-50 sm:size-10 dark:hover:bg-zinc-700"
+										aria-label={`Icon for ${row.name || "new category"}`}
 									>
 										<Icon size={18} />
 									</button>
 								}
 							>
 								<div>
-									<p className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+									<p className="mb-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200">
 										Icon
 									</p>
 									<div className="grid grid-cols-7 gap-1">
@@ -222,18 +220,13 @@ export default function EditBudgetModal({
 												onClick={() => update(row.key, { icon: key })}
 												aria-label={key}
 												aria-pressed={row.icon === key}
-												className="flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 aria-pressed:bg-violet-100 aria-pressed:text-violet-700 dark:hover:bg-slate-800 dark:aria-pressed:bg-violet-500/20 dark:aria-pressed:text-violet-300"
+												className="flex size-8 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 aria-pressed:bg-zinc-900 aria-pressed:text-white dark:hover:bg-zinc-800 dark:aria-pressed:bg-white dark:aria-pressed:text-zinc-900"
 											>
 												<I size={16} />
 											</button>
 										))}
 									</div>
 								</div>
-								<ColorPicker
-									value={row.color}
-									onChange={(color) => update(row.key, { color })}
-									size="sm"
-								/>
 							</Popover>
 							<InputField
 								aria-label="Category name"

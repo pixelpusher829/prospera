@@ -32,6 +32,7 @@ import { cn } from "@/shared/lib/cn";
 import { goalProgress, parseIsoDate, todayIso } from "@/shared/lib/finance";
 import { GOAL_ICONS, iconFor } from "@/shared/lib/icons";
 import { currencySymbol, parseMoney } from "@/shared/lib/money";
+import { BRAND_GRADIENT } from "@/shared/lib/tints";
 import GoalModal from "./GoalModal";
 
 function ContributeModal({
@@ -140,14 +141,11 @@ function GoalCard({
 		<Card className="flex flex-col">
 			<div className="flex items-start justify-between gap-3">
 				<div className="flex min-w-0 items-center gap-3">
-					<span
-						className="flex size-12 shrink-0 items-center justify-center rounded-2xl"
-						style={{ background: `${goal.color}1f`, color: goal.color }}
-					>
+					<span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white">
 						<Icon size={22} />
 					</span>
 					<div className="min-w-0">
-						<h3 className="truncate text-lg font-semibold text-slate-900 dark:text-white">
+						<h3 className="truncate text-lg font-semibold text-zinc-900 dark:text-white">
 							{goal.name}
 						</h3>
 						<p
@@ -155,7 +153,7 @@ function GoalCard({
 								"mt-0.5 flex items-center gap-1 text-xs",
 								p.isOverdue
 									? "text-amber-600 dark:text-amber-400"
-									: "text-slate-500 dark:text-slate-400",
+									: "text-zinc-500 dark:text-zinc-400",
 							)}
 						>
 							<CalendarDays size={12} />
@@ -170,7 +168,7 @@ function GoalCard({
 							variant="ghost"
 							size="icon-sm"
 							aria-label={`Actions for ${goal.name}`}
-							className="-mr-2 text-slate-400"
+							className="-mr-2 text-zinc-400"
 						>
 							<MoreVertical size={18} />
 						</Button>
@@ -197,15 +195,15 @@ function GoalCard({
 			</div>
 
 			<div className="mt-6 flex items-end justify-between gap-2">
-				<span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums dark:text-white">
+				<span className="font-display text-2xl font-bold tracking-tight text-zinc-900 tabular-nums dark:text-white">
 					{format(goal.currentAmount)}
 				</span>
-				<span className="mb-0.5 text-sm text-slate-500 tabular-nums dark:text-slate-400">
+				<span className="mb-0.5 text-sm text-zinc-500 tabular-nums dark:text-zinc-400">
 					of {format(goal.targetAmount)}
 				</span>
 			</div>
 			<div
-				className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+				className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
 				role="progressbar"
 				aria-valuenow={p.pct}
 				aria-valuemin={0}
@@ -213,12 +211,15 @@ function GoalCard({
 				aria-label={`${goal.name} progress`}
 			>
 				<div
-					className="h-full rounded-full transition-[width] duration-700 ease-out"
-					style={{ width: `${Math.max(2, p.pct)}%`, background: goal.color }}
+					className={cn(
+						"h-full rounded-full transition-[width] duration-700 ease-out",
+						BRAND_GRADIENT,
+					)}
+					style={{ width: `${Math.max(2, p.pct)}%` }}
 				/>
 			</div>
 			<div className="mt-3 flex items-center justify-between text-sm">
-				<span className="font-semibold" style={{ color: goal.color }}>
+				<span className="font-semibold text-zinc-900 tabular-nums dark:text-white">
 					{p.pct}%
 				</span>
 				{p.isComplete ? (
@@ -226,7 +227,7 @@ function GoalCard({
 						<CheckCircle2 size={16} /> Goal reached
 					</span>
 				) : (
-					<span className="text-slate-500 dark:text-slate-400">
+					<span className="text-zinc-500 dark:text-zinc-400">
 						{p.isOverdue
 							? `${format(p.remaining)} to go`
 							: `${format(p.monthlyNeeded, { whole: p.monthlyNeeded >= 100 })}/mo to finish on time`}
@@ -333,13 +334,13 @@ export default function Goals() {
 					{active.length > 0 ? (
 						grid(active)
 					) : (
-						<p className="text-sm text-slate-500 dark:text-slate-400">
+						<p className="text-sm text-zinc-500 dark:text-zinc-400">
 							Every goal is complete. Time to set a new one!
 						</p>
 					)}
 					{done.length > 0 && (
 						<section className="space-y-3">
-							<h2 className="text-sm font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400">
+							<h2 className="text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
 								Completed
 							</h2>
 							{grid(done)}

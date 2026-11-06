@@ -279,7 +279,7 @@ export default function Transactions() {
 									<button
 										type="button"
 										onClick={() => setFilter("search", "")}
-										className="rounded-md p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+										className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
 										aria-label="Clear search"
 									>
 										<X size={14} />
@@ -321,7 +321,7 @@ export default function Transactions() {
 									>
 										More filters
 										{advancedCount > 0 && (
-											<span className="ml-0.5 rounded-full bg-violet-600 px-1.5 text-xs text-white">
+											<span className="ml-0.5 rounded-full bg-zinc-900 px-1.5 text-xs text-white dark:bg-white dark:text-zinc-900">
 												{advancedCount}
 											</span>
 										)}
@@ -369,10 +369,10 @@ export default function Transactions() {
 									<SelectItem value="pending">Pending</SelectItem>
 								</SelectField>
 								<fieldset>
-									<legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+									<legend className="mb-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200">
 										Categories
 									</legend>
-									<div className="max-h-40 space-y-1.5 overflow-y-auto rounded-xl border border-slate-200 p-2.5 dark:border-slate-700">
+									<div className="max-h-40 space-y-1.5 overflow-y-auto rounded-xl border border-zinc-200 p-2.5 dark:border-zinc-700">
 										{categories.map((c) => (
 											<Checkbox
 												key={c}
@@ -408,7 +408,7 @@ export default function Transactions() {
 					</div>
 
 					<p
-						className="text-sm text-slate-500 dark:text-slate-400"
+						className="text-sm text-zinc-500 dark:text-zinc-400"
 						aria-live="polite"
 					>
 						{filtered.length} transaction{filtered.length === 1 ? "" : "s"}

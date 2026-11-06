@@ -140,7 +140,7 @@ export default function TransactionModal({
 				</>
 			}
 		>
-			<fieldset className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1 dark:bg-slate-800/70">
+			<fieldset className="grid grid-cols-2 gap-2 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800/70">
 				<legend className="sr-only">Transaction type</legend>
 				{(
 					[
@@ -159,9 +159,9 @@ export default function TransactionModal({
 								"flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium transition-colors",
 								active
 									? value === "income"
-										? "bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400"
-										: "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white"
-									: "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white",
+										? "bg-white text-emerald-700 shadow-sm dark:bg-zinc-900 dark:text-emerald-400"
+										: "bg-white text-zinc-900 shadow-sm dark:bg-zinc-900 dark:text-white"
+									: "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white",
 							)}
 						>
 							<Icon size={16} />

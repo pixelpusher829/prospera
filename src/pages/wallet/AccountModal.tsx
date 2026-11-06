@@ -184,7 +184,7 @@ export default function AccountModal({
 				}
 			>
 				<fieldset>
-					<legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+					<legend className="mb-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200">
 						Type
 					</legend>
 					<div className="grid grid-cols-3 gap-2">
@@ -197,8 +197,8 @@ export default function AccountModal({
 								className={cn(
 									"flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-xs font-medium transition-colors",
 									type === t.value
-										? "border-violet-500 bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
-										: "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800",
+										? "border-zinc-900 bg-zinc-50 text-zinc-900 ring-1 ring-zinc-900 dark:border-zinc-200 dark:bg-zinc-800 dark:text-white dark:ring-zinc-200"
+										: "border-zinc-200 text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800",
 								)}
 							>
 								<t.icon size={18} />
@@ -282,7 +282,7 @@ export default function AccountModal({
 
 				{type === "Credit" && (
 					<fieldset>
-						<legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
+						<legend className="mb-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200">
 							Card colour
 						</legend>
 						<div className="flex flex-wrap gap-2">
@@ -294,10 +294,10 @@ export default function AccountModal({
 									aria-pressed={form.values.colorTheme === t.value}
 									onClick={() => form.set("colorTheme", t.value)}
 									className={cn(
-										"flex h-8 w-12 items-center justify-center rounded-lg bg-linear-to-br ring-offset-2 ring-offset-white dark:ring-offset-slate-900",
+										"flex h-8 w-12 items-center justify-center rounded-lg bg-linear-to-br ring-offset-2 ring-offset-white dark:ring-offset-zinc-900",
 										t.value,
 										form.values.colorTheme === t.value &&
-											"ring-2 ring-violet-500",
+											"ring-2 ring-zinc-900 ring-offset-2 dark:ring-white dark:ring-offset-zinc-900",
 									)}
 								>
 									{form.values.colorTheme === t.value && (

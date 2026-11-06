@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import { InputField } from "@/shared/components/forms";
 import { EmptyState } from "@/shared/components/ui/EmptyState";
 import Header from "@/shared/layout/Header";
+import { cn } from "@/shared/lib/cn";
+import { TINTS } from "@/shared/lib/tints";
 
 const GUIDES = [
 	{
@@ -105,16 +107,21 @@ export default function Help() {
 					<Link
 						key={g.to}
 						to={g.to}
-						className="card flex items-start gap-3 p-4 transition-[border-color,box-shadow] hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700"
+						className="card flex items-start gap-3 p-4 transition-[border-color,box-shadow] hover:border-zinc-300 hover:shadow-sm dark:hover:border-zinc-700"
 					>
-						<span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400">
+						<span
+							className={cn(
+								"flex size-10 shrink-0 items-center justify-center rounded-xl",
+								TINTS.icon,
+							)}
+						>
 							<g.icon size={18} />
 						</span>
 						<span>
-							<span className="block font-medium text-slate-900 dark:text-white">
+							<span className="block font-medium text-zinc-900 dark:text-white">
 								{g.title}
 							</span>
-							<span className="block text-sm text-slate-500 dark:text-slate-400">
+							<span className="block text-sm text-zinc-500 dark:text-zinc-400">
 								{g.text}
 							</span>
 						</span>
@@ -126,7 +133,7 @@ export default function Help() {
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 					<h2
 						id="faq-title"
-						className="text-lg font-semibold text-slate-900 dark:text-white"
+						className="text-lg font-semibold text-zinc-900 dark:text-white"
 					>
 						Frequently asked questions
 					</h2>
@@ -142,7 +149,7 @@ export default function Help() {
 								<button
 									type="button"
 									onClick={() => setQuery("")}
-									className="rounded-md p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+									className="rounded-md p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
 									aria-label="Clear search"
 								>
 									<X size={14} />
@@ -158,7 +165,7 @@ export default function Help() {
 						description="Try different words, or browse all questions."
 					/>
 				) : (
-					<ul className="card divide-y divide-slate-100 dark:divide-slate-800">
+					<ul className="card divide-y divide-zinc-100 dark:divide-zinc-800">
 						{results.map((f) => {
 							const isOpen = open === f.q || query.length > 0;
 							const id = `faq-${FAQ.indexOf(f)}`;
@@ -170,19 +177,19 @@ export default function Help() {
 											aria-expanded={isOpen}
 											aria-controls={id}
 											onClick={() => setOpen(open === f.q ? null : f.q)}
-											className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-medium text-slate-900 hover:bg-slate-50 dark:text-white dark:hover:bg-slate-800/50"
+											className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-medium text-zinc-900 hover:bg-zinc-50 dark:text-white dark:hover:bg-zinc-800/50"
 										>
 											{f.q}
 											<ChevronDown
 												size={18}
-												className={`shrink-0 text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+												className={`shrink-0 text-zinc-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
 											/>
 										</button>
 									</h3>
 									<div
 										id={id}
 										hidden={!isOpen}
-										className="px-5 pb-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300"
+										className="px-5 pb-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300"
 									>
 										{f.a}
 									</div>

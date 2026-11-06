@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import Button, { buttonVariants } from "@/shared/components/Button";
 import { useAppMutation } from "@/shared/hooks/data";
 import { cn } from "@/shared/lib/cn";
+import { TINTS } from "@/shared/lib/tints";
 
 export function LoadDemoButton({
 	variant = "secondary",
@@ -98,11 +99,10 @@ export function Onboarding({
 			aria-labelledby="onboarding-title"
 			className="card relative overflow-hidden p-5 sm:p-6"
 		>
-			<div className="absolute -top-24 -right-24 size-64 rounded-full bg-violet-500/10 blur-3xl" />
 			<button
 				type="button"
 				onClick={() => dismiss.mutate({ onboardingDismissed: true })}
-				className="absolute top-3 right-3 rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
+				className="absolute top-3 right-3 rounded-lg p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-white"
 				aria-label="Hide getting started"
 			>
 				<X size={18} />
@@ -111,11 +111,11 @@ export function Onboarding({
 				<div>
 					<h2
 						id="onboarding-title"
-						className="text-lg font-semibold text-slate-900 dark:text-white"
+						className="text-lg font-semibold text-zinc-900 dark:text-white"
 					>
 						{isEmpty ? `Welcome to Prospera, ${name}` : "Finish setting up"}
 					</h2>
-					<p className="text-sm text-slate-500 dark:text-slate-400">
+					<p className="text-sm text-zinc-500 dark:text-zinc-400">
 						{isEmpty
 							? "Four quick steps and your dashboard comes to life. Or load sample data to explore first."
 							: `${completed} of ${steps.length} done.`}
@@ -128,11 +128,11 @@ export function Onboarding({
 				)}
 			</div>
 			<div
-				className="relative mt-4 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+				className="relative mt-4 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
 				aria-hidden
 			>
 				<div
-					className="h-full rounded-full bg-linear-to-r from-violet-500 to-fuchsia-500 transition-[width] duration-500"
+					className="h-full rounded-full bg-zinc-900 transition-[width] dark:bg-white duration-500"
 					style={{ width: `${(completed / steps.length) * 100}%` }}
 				/>
 			</div>
@@ -144,26 +144,24 @@ export function Onboarding({
 							"flex flex-col rounded-xl border p-4 transition-colors",
 							step.done
 								? "border-emerald-200 bg-emerald-50/50 dark:border-emerald-500/20 dark:bg-emerald-500/5"
-								: "border-slate-200 dark:border-slate-800",
+								: "border-zinc-200 dark:border-zinc-800",
 						)}
 					>
 						<div className="flex items-center gap-3">
 							<span
 								className={cn(
 									"flex size-8 items-center justify-center rounded-lg",
-									step.done
-										? "bg-emerald-500 text-white"
-										: "bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400",
+									step.done ? "bg-emerald-500 text-white" : TINTS.icon,
 								)}
 							>
 								{step.done ? <Check size={16} /> : <step.icon size={16} />}
 							</span>
-							<span className="font-medium text-slate-900 dark:text-white">
+							<span className="font-medium text-zinc-900 dark:text-white">
 								{step.title}
 								{step.done && <span className="sr-only"> (done)</span>}
 							</span>
 						</div>
-						<p className="mt-2 flex-1 text-sm text-slate-500 dark:text-slate-400">
+						<p className="mt-2 flex-1 text-sm text-zinc-500 dark:text-zinc-400">
 							{step.description}
 						</p>
 						{!step.done && (

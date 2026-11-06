@@ -81,7 +81,7 @@ export default function Table<T>({
 							className={cn(
 								"card flex items-center gap-3 p-3.5 transition-colors",
 								selectedIds?.has(id) &&
-									"border-violet-300 bg-violet-50/60 dark:border-violet-700 dark:bg-violet-500/10",
+									"border-zinc-300 bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800/60",
 							)}
 						>
 							{selectable && (
@@ -112,7 +112,7 @@ export default function Table<T>({
 					<table className="w-full text-left text-sm">
 						<caption className="sr-only">{caption}</caption>
 						<thead>
-							<tr className="border-b border-slate-100 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-900">
+							<tr className="border-b border-zinc-100 bg-zinc-50/80 dark:border-zinc-800 dark:bg-zinc-900">
 								{selectable && (
 									<th scope="col" className="w-12 py-3 pl-5">
 										<Checkbox
@@ -138,7 +138,7 @@ export default function Table<T>({
 													: undefined
 											}
 											className={cn(
-												"px-4 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400",
+												"px-4 py-3 text-xs font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400",
 												col.align === "right" && "text-right",
 											)}
 										>
@@ -147,8 +147,8 @@ export default function Table<T>({
 													type="button"
 													onClick={() => onSort(col.sortKey as string)}
 													className={cn(
-														"inline-flex items-center gap-1 rounded uppercase hover:text-slate-800 dark:hover:text-white",
-														active && "text-slate-800 dark:text-white",
+														"inline-flex items-center gap-1 rounded uppercase hover:text-zinc-800 dark:hover:text-white",
+														active && "text-zinc-800 dark:text-white",
 													)}
 												>
 													{col.header}
@@ -175,7 +175,7 @@ export default function Table<T>({
 								)}
 							</tr>
 						</thead>
-						<tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+						<tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
 							{data.map((row) => {
 								const id = getRowId(row);
 								const selected = selectedIds?.has(id);
@@ -186,9 +186,9 @@ export default function Table<T>({
 										className={cn(
 											"group transition-colors",
 											onRowClick &&
-												"cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50",
+												"cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50",
 											selected &&
-												"bg-violet-50/60 hover:bg-violet-50 dark:bg-violet-500/10 dark:hover:bg-violet-500/15",
+												"bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800",
 										)}
 									>
 										{selectable && (

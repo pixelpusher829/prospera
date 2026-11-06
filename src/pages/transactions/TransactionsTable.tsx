@@ -31,7 +31,7 @@ export function TypeIcon({ type }: { type: Transaction["type"] }) {
 				"flex size-9 shrink-0 items-center justify-center rounded-full",
 				type === "income"
 					? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
-					: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
+					: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400",
 			)}
 		>
 			{type === "income" ? (
@@ -59,7 +59,7 @@ export function Amount({
 				"font-semibold tabular-nums",
 				income
 					? "text-emerald-600 dark:text-emerald-400"
-					: "text-slate-900 dark:text-white",
+					: "text-zinc-900 dark:text-white",
 				className,
 			)}
 		>
@@ -106,7 +106,7 @@ export default function TransactionsTable({
 			cell: (t) => (
 				<span className="flex min-w-0 items-center gap-3">
 					<TypeIcon type={t.type} />
-					<span className="max-w-64 truncate font-medium text-slate-900 dark:text-white">
+					<span className="max-w-64 truncate font-medium text-zinc-900 dark:text-white">
 						{t.payee}
 					</span>
 				</span>
@@ -115,7 +115,7 @@ export default function TransactionsTable({
 		{
 			header: "Date",
 			sortKey: "date",
-			className: "text-slate-500 tabular-nums dark:text-slate-400",
+			className: "text-zinc-500 tabular-nums dark:text-zinc-400",
 			cell: (t) => formatDate(t.date),
 		},
 		{
@@ -128,7 +128,7 @@ export default function TransactionsTable({
 					trigger={
 						<button
 							type="button"
-							className="inline-flex max-w-44 items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+							className="inline-flex max-w-44 items-center gap-1 rounded-lg bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
 							aria-label={`Category: ${t.category}. Change category`}
 						>
 							<span className="truncate">{t.category}</span>
@@ -152,10 +152,10 @@ export default function TransactionsTable({
 		{
 			header: "Account",
 			sortKey: "account",
-			className: "text-slate-500 dark:text-slate-400",
+			className: "text-zinc-500 dark:text-zinc-400",
 			cell: (t) =>
 				(t.accountId && accountNames.get(t.accountId)) || (
-					<span className="text-slate-300 dark:text-slate-600">—</span>
+					<span className="text-zinc-300 dark:text-zinc-600">—</span>
 				),
 		},
 		{
@@ -188,10 +188,10 @@ export default function TransactionsTable({
 				<span className="flex items-center gap-3">
 					<TypeIcon type={t.type} />
 					<span className="min-w-0 flex-1">
-						<span className="block truncate font-medium text-slate-900 dark:text-white">
+						<span className="block truncate font-medium text-zinc-900 dark:text-white">
 							{t.payee}
 						</span>
-						<span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+						<span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
 							{formatDate(t.date)} · {t.category}
 							{t.status === "pending" && " · Pending"}
 						</span>
@@ -207,7 +207,7 @@ export default function TransactionsTable({
 							variant="ghost"
 							size="icon-sm"
 							aria-label={`Actions for ${t.payee}`}
-							className="text-slate-400 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
+							className="text-zinc-400 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:data-[state=open]:opacity-100"
 						>
 							<MoreHorizontal size={18} />
 						</Button>

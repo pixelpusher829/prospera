@@ -3,7 +3,7 @@ import { useId } from "react";
 import { cn } from "@/shared/lib/cn";
 
 export const inputClass =
-	"h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base text-slate-900 shadow-xs transition-[border-color,box-shadow] placeholder:text-slate-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/15 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 read-only:bg-slate-50 sm:h-10 sm:text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:read-only:bg-slate-800/50";
+	"h-11 w-full rounded-xl border border-zinc-200 bg-white px-3.5 text-base text-zinc-900 shadow-xs transition-[border-color,box-shadow] placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-4 focus:ring-zinc-900/5 dark:focus:border-zinc-500 dark:focus:ring-white/10 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 read-only:bg-zinc-50 sm:h-10 sm:text-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-500 dark:read-only:bg-zinc-800/50";
 
 export const invalidClass =
 	"border-red-400 focus:border-red-500 focus:ring-red-500/15 dark:border-red-500/70";
@@ -31,7 +31,7 @@ export function FieldShell({
 			{label && (
 				<label
 					htmlFor={id}
-					className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200"
+					className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-200"
 				>
 					{label}
 				</label>
@@ -48,7 +48,7 @@ export function FieldShell({
 			) : hint ? (
 				<p
 					id={`${id}-hint`}
-					className="mt-1.5 text-xs text-slate-500 dark:text-slate-400"
+					className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400"
 				>
 					{hint}
 				</p>
@@ -103,7 +103,7 @@ export function InputField({
 		>
 			<div className="relative">
 				{lead && (
-					<span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-slate-400 [&>svg]:size-4">
+					<span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-zinc-400 [&>svg]:size-4">
 						{lead}
 					</span>
 				)}

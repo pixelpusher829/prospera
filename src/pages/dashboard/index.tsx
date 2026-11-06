@@ -3,10 +3,8 @@ import {
 	ArrowRight,
 	ArrowUpRight,
 	Plus,
-	Target,
 	TrendingDown,
 	TrendingUp,
-	Wallet,
 } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
@@ -14,6 +12,7 @@ import { Link } from "react-router-dom";
 import Button from "@/shared/components/Button";
 import { Card, CardHeader } from "@/shared/components/ui/Card";
 import { PageSkeleton } from "@/shared/components/ui/Skeleton";
+import { Sparkline } from "@/shared/components/ui/Sparkline";
 import {
 	type Transaction,
 	useAccounts,
@@ -38,6 +37,7 @@ import {
 	todayIso,
 } from "@/shared/lib/finance";
 import { formatPercent } from "@/shared/lib/money";
+import { BRAND_GRADIENT } from "@/shared/lib/tints";
 import TransactionModal from "../transactions/TransactionModal";
 import {
 	Amount,
@@ -54,61 +54,31 @@ function greeting() {
 	return "Good evening";
 }
 
-function Tile({
+function Stat({
 	to,
 	label,
 	value,
-	icon: Icon,
 	children,
-	tone = "default",
 }: {
 	to: string;
 	label: string;
 	value: string;
-	icon: typeof Wallet;
 	children?: React.ReactNode;
-	tone?: "default" | "dark";
 }) {
 	return (
 		<Link
 			to={to}
-			className={cn(
-				"group relative flex min-h-32 flex-col gap-4 sm:min-h-40 justify-between overflow-hidden rounded-2xl p-5 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-lg",
-				tone === "dark"
-					? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 dark:bg-linear-to-br dark:from-violet-600/30 dark:to-slate-900 dark:ring-1 dark:ring-violet-500/20"
-					: "card hover:shadow-slate-200/60 dark:hover:shadow-black/30",
-			)}
+			className="group flex flex-col justify-between gap-3 p-5 transition-colors hover:bg-zinc-50 sm:p-6 dark:hover:bg-zinc-800/40"
 		>
-			{tone === "dark" && (
-				<div className="absolute -top-10 -right-10 size-40 rounded-full bg-brand-pink/20 blur-2xl" />
-			)}
-			<div className="relative flex items-center justify-between">
-				<span
-					className={cn(
-						"text-sm font-medium",
-						tone === "dark"
-							? "text-slate-300"
-							: "text-slate-500 dark:text-slate-400",
-					)}
-				>
-					{label}
-				</span>
-				<Icon
-					size={18}
-					className={
-						tone === "dark"
-							? "text-slate-400"
-							: "text-slate-400 dark:text-slate-500"
-					}
+			<span className="flex items-center justify-between text-sm font-medium text-zinc-500 dark:text-zinc-400">
+				{label}
+				<ArrowRight
+					size={14}
+					className="-translate-x-1 opacity-0 transition-[opacity,transform] group-hover:translate-x-0 group-hover:opacity-100"
 				/>
-			</div>
-			<div className="relative">
-				<p
-					className={cn(
-						"truncate text-2xl font-bold tracking-tight tabular-nums",
-						tone === "dark" ? "text-white" : "text-slate-900 dark:text-white",
-					)}
-				>
+			</span>
+			<div>
+				<p className="truncate font-display text-2xl font-bold tracking-tight text-zinc-950 tabular-nums dark:text-white">
 					{value}
 				</p>
 				{children}
@@ -119,7 +89,7 @@ function Tile({
 
 function Progress({
 	value,
-	color = "bg-violet-500",
+	color = BRAND_GRADIENT,
 	over,
 }: {
 	value: number;
@@ -128,7 +98,7 @@ function Progress({
 }) {
 	return (
 		<div
-			className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+			className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800"
 			aria-hidden
 		>
 			<div
@@ -168,6 +138,7 @@ export default function Dashboard() {
 		return {
 			summary,
 			netWorthDelta: summary.netWorth - monthAgo,
+			history: history.map((p) => p.value),
 			budget,
 			topGoal,
 			series: monthlySeries(transactions, 6, today),
@@ -212,30 +183,54 @@ export default function Dashboard() {
 				/>
 			)}
 
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-				<Tile
-					to="/wallet"
-					label="Net worth"
-					value={format(summary.netWorth)}
-					icon={Wallet}
-					tone="dark"
-				>
-					<p className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-2 py-1 text-xs text-slate-200">
-						{stats.netWorthDelta >= 0 ? (
-							<TrendingUp size={14} className="text-emerald-400" />
-						) : (
-							<TrendingDown size={14} className="text-red-400" />
-						)}
-						{format(stats.netWorthDelta, { sign: true })} in 30 days
+			<section
+				aria-label="Net worth"
+				className="grid gap-6 pt-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-end lg:gap-12"
+			>
+				<div>
+					<Link
+						to="/wallet"
+						className="eyebrow inline-flex items-center gap-1 hover:text-zinc-900 dark:hover:text-white"
+					>
+						Net worth <ArrowRight size={14} />
+					</Link>
+					<p className="hero-figure mt-3 truncate">
+						{format(summary.netWorth)}
 					</p>
-				</Tile>
-				<Tile
+					<p className="mt-4 flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+						<span
+							className={cn(
+								"inline-flex items-center gap-1 font-semibold",
+								stats.netWorthDelta >= 0
+									? "text-emerald-700 dark:text-emerald-400"
+									: "text-red-600 dark:text-red-400",
+							)}
+						>
+							{stats.netWorthDelta >= 0 ? (
+								<TrendingUp size={15} />
+							) : (
+								<TrendingDown size={15} />
+							)}
+							{format(stats.netWorthDelta, { sign: true })}
+						</span>
+						in the last 30 days
+					</p>
+				</div>
+				<Sparkline
+					values={stats.history}
+					brand
+					className="h-20 sm:h-28"
+					label="Net worth over the last 30 days"
+				/>
+			</section>
+
+			<div className="card grid divide-y divide-zinc-200/70 overflow-hidden sm:grid-cols-3 sm:divide-x sm:divide-y-0 dark:divide-zinc-800">
+				<Stat
 					to="/analytics"
 					label="Spent this month"
 					value={format(summary.month.expense)}
-					icon={ArrowUpRight}
 				>
-					<p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+					<p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
 						{summary.expenseChange === null ? (
 							"Nothing to compare with last month yet"
 						) : (
@@ -254,47 +249,45 @@ export default function Dashboard() {
 							</>
 						)}
 					</p>
-				</Tile>
-				<Tile
+				</Stat>
+				<Stat
 					to="/budget"
 					label="Budget left"
 					value={budgets.length ? format(budget.remaining) : "No budget"}
-					icon={Wallet}
 				>
 					{budgets.length ? (
 						<>
 							<Progress value={budget.pct} over={budget.remaining < 0} />
-							<p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+							<p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
 								{budget.pct}% of {format(budget.totalLimit, { whole: true })}{" "}
 								used
 							</p>
 						</>
 					) : (
-						<p className="mt-2 text-xs text-violet-600 dark:text-violet-400">
+						<p className="mt-2 text-xs font-medium text-zinc-900 underline-offset-4 group-hover:underline dark:text-white">
 							Set one up →
 						</p>
 					)}
-				</Tile>
-				<Tile
+				</Stat>
+				<Stat
 					to="/goals"
 					label={topGoal ? "Next goal" : "Goals"}
 					value={topGoal ? topGoal.goal.name : "No active goals"}
-					icon={Target}
 				>
 					{topGoal ? (
 						<>
 							<Progress value={topGoal.pct} color="bg-emerald-500" />
-							<p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+							<p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
 								{topGoal.pct}% · {format(topGoal.remaining, { whole: true })} to
 								go
 							</p>
 						</>
 					) : (
-						<p className="mt-2 text-xs text-violet-600 dark:text-violet-400">
+						<p className="mt-2 text-xs font-medium text-zinc-900 underline-offset-4 group-hover:underline dark:text-white">
 							Create one →
 						</p>
 					)}
-				</Tile>
+				</Stat>
 			</div>
 
 			<div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
@@ -311,7 +304,7 @@ export default function Dashboard() {
 						}
 					/>
 					{transactions.length === 0 ? (
-						<p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+						<p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
 							Transactions you add will show up here.
 						</p>
 					) : (
@@ -324,14 +317,14 @@ export default function Dashboard() {
 											setEditing(t);
 											setModalOpen(true);
 										}}
-										className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+										className="flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/60"
 									>
 										<TypeIcon type={t.type} />
 										<span className="min-w-0 flex-1">
-											<span className="block truncate text-sm font-medium text-slate-900 dark:text-white">
+											<span className="block truncate text-sm font-medium text-zinc-900 dark:text-white">
 												{t.payee}
 											</span>
-											<span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+											<span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
 												{formatDate(t.date)} · {t.category}
 											</span>
 										</span>
@@ -355,15 +348,15 @@ export default function Dashboard() {
 								<p className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
 									<ArrowDownLeft size={14} /> Income
 								</p>
-								<p className="mt-1 truncate text-lg font-bold text-slate-900 tabular-nums dark:text-white">
+								<p className="mt-1 truncate text-lg font-semibold text-zinc-900 tabular-nums dark:text-white">
 									{format(summary.month.income)}
 								</p>
 							</div>
-							<div className="rounded-xl bg-slate-100 p-3 dark:bg-slate-800">
-								<p className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
+							<div className="rounded-xl bg-zinc-100 p-3 dark:bg-zinc-800">
+								<p className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
 									<ArrowUpRight size={14} /> Spending
 								</p>
-								<p className="mt-1 truncate text-lg font-bold text-slate-900 tabular-nums dark:text-white">
+								<p className="mt-1 truncate text-lg font-semibold text-zinc-900 tabular-nums dark:text-white">
 									{format(summary.month.expense)}
 								</p>
 							</div>
@@ -385,12 +378,12 @@ export default function Dashboard() {
 											title={`${m.label} income ${format(m.income)}`}
 										/>
 										<div
-											className="w-1/2 max-w-3 rounded-t bg-slate-300 dark:bg-slate-600"
+											className="w-1/2 max-w-3 rounded-t bg-zinc-300 dark:bg-zinc-600"
 											style={{ height: `${(m.expense / maxBar) * 100}%` }}
 											title={`${m.label} spending ${format(m.expense)}`}
 										/>
 									</div>
-									<span className="text-[11px] text-slate-400">{m.label}</span>
+									<span className="text-[11px] text-zinc-400">{m.label}</span>
 								</div>
 							))}
 						</div>

@@ -48,10 +48,10 @@ export function AlertList({
 		return (
 			<div className="flex flex-col items-center py-6 text-center">
 				<CheckCircle2 className="mb-2 text-emerald-500" size={28} />
-				<p className="text-sm font-medium text-slate-900 dark:text-white">
+				<p className="text-sm font-medium text-zinc-900 dark:text-white">
 					You're all caught up
 				</p>
-				<p className="text-xs text-slate-500 dark:text-slate-400">
+				<p className="text-xs text-zinc-500 dark:text-zinc-400">
 					Budget and goal alerts will show up here.
 				</p>
 			</div>
@@ -64,7 +64,7 @@ export function AlertList({
 					<Link
 						to={alert.href}
 						onClick={onNavigate}
-						className="flex gap-3 rounded-lg p-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+						className="flex gap-3 rounded-lg p-2 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800"
 					>
 						<span
 							aria-hidden
@@ -74,10 +74,10 @@ export function AlertList({
 							)}
 						/>
 						<span className="min-w-0">
-							<span className="block text-sm font-medium text-slate-900 dark:text-white">
+							<span className="block text-sm font-medium text-zinc-900 dark:text-white">
 								{alert.title}
 							</span>
-							<span className="block text-xs text-slate-500 dark:text-slate-400">
+							<span className="block text-xs text-zinc-500 dark:text-zinc-400">
 								{alert.detail}
 							</span>
 						</span>
@@ -107,19 +107,19 @@ export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 	};
 
 	return (
-		<header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-slate-200/80 bg-white/80 px-4 backdrop-blur-md sm:px-6 dark:border-slate-800 dark:bg-slate-950/80">
+		<header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-zinc-200/70 bg-canvas/85 px-4 backdrop-blur-md sm:px-6 dark:border-zinc-800 dark:bg-zinc-950/80">
 			<button
 				type="button"
 				onClick={onMenuClick}
 				aria-label="Open menu"
 				aria-controls="app-sidebar"
-				className="-ml-2 rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden dark:text-slate-300 dark:hover:bg-slate-800"
+				className="-ml-2 rounded-lg p-2 text-zinc-600 hover:bg-zinc-100 lg:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
 			>
 				<MenuIcon size={22} />
 			</button>
 			<Link to="/" className="flex items-center gap-2 lg:hidden">
 				<img src={logo} alt="" className="h-6 w-auto" />
-				<span className="text-lg font-bold text-slate-900 dark:text-white">
+				<span className="font-display text-lg font-bold tracking-tight text-zinc-950 dark:text-white">
 					Prospera
 				</span>
 			</Link>
@@ -129,7 +129,7 @@ export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 					trigger={
 						<button
 							type="button"
-							className="relative rounded-full p-2.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+							className="relative rounded-full p-2.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
 							aria-label={
 								urgent.length
 									? `Notifications, ${urgent.length} need attention`
@@ -138,7 +138,7 @@ export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 						>
 							<Bell size={20} />
 							{urgent.length > 0 && (
-								<span className="absolute top-1.5 right-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-950">
+								<span className="absolute top-1.5 right-1.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-zinc-950">
 									{urgent.length > 9 ? "9+" : urgent.length}
 								</span>
 							)}
@@ -146,7 +146,7 @@ export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 					}
 					className="w-80 p-2"
 				>
-					<p className="px-2 pt-1 pb-2 text-sm font-semibold text-slate-900 dark:text-white">
+					<p className="px-2 pt-1 pb-2 text-sm font-semibold text-zinc-900 dark:text-white">
 						Notifications
 					</p>
 					<AlertList alerts={alerts} />
@@ -157,15 +157,15 @@ export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 					trigger={
 						<button
 							type="button"
-							className="flex items-center gap-3 rounded-full p-1 transition-colors hover:bg-slate-100 sm:rounded-xl sm:py-1.5 sm:pr-3 sm:pl-1.5 dark:hover:bg-slate-800"
+							className="flex items-center gap-3 rounded-full p-1 transition-colors hover:bg-zinc-100 sm:rounded-xl sm:py-1.5 sm:pr-3 sm:pl-1.5 dark:hover:bg-zinc-800"
 							aria-label="Account menu"
 						>
 							<Avatar name={viewer?.name || viewer?.email || "?"} size="sm" />
 							<span className="hidden max-w-40 text-left sm:block">
-								<span className="block truncate text-sm font-semibold text-slate-900 dark:text-white">
+								<span className="block truncate text-sm font-semibold text-zinc-900 dark:text-white">
 									{viewer?.name || "Your account"}
 								</span>
-								<span className="block truncate text-xs text-slate-500 dark:text-slate-400">
+								<span className="block truncate text-xs text-zinc-500 dark:text-zinc-400">
 									{viewer?.isGuest ? "Demo workspace" : viewer?.email}
 								</span>
 							</span>
@@ -197,7 +197,7 @@ export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 						>
 							<span className="flex-1">{label}</span>
 							{preference === value && (
-								<span className="text-xs text-violet-600 dark:text-violet-400">
+								<span className="text-xs text-zinc-400 dark:text-zinc-500">
 									Active
 								</span>
 							)}
