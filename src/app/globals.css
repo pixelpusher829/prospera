@@ -76,6 +76,25 @@
 	}
 }
 
+/*
+ * Dark mode greys carry a slight cool tint (between zinc and slate).
+ * Redefining the scale here re-tints every dark surface without touching
+ * components; light mode keeps pure neutral zinc.
+ */
+.dark {
+	--color-zinc-50: #f9fafb;
+	--color-zinc-100: #f2f3f6;
+	--color-zinc-200: #e2e5eb;
+	--color-zinc-300: #d0d4dd;
+	--color-zinc-400: #9ea4b3;
+	--color-zinc-500: #6f7587;
+	--color-zinc-600: #515768;
+	--color-zinc-700: #3a3f4d;
+	--color-zinc-800: #252935;
+	--color-zinc-900: #161921;
+	--color-zinc-950: #0b0d12;
+}
+
 @layer base {
 	html {
 		-webkit-tap-highlight-color: transparent;
