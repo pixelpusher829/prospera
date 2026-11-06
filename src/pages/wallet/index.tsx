@@ -245,7 +245,7 @@ export default function Wallet() {
 						))}
 					</div>
 
-					<div className="space-y-8">
+					<div className="space-y-10">
 						{groups.map((group) => {
 							const items = accounts.filter((a) =>
 								group.types.includes(a.type),
@@ -259,7 +259,7 @@ export default function Wallet() {
 									aria-labelledby={`group-${group.id}`}
 									className="animate-rise"
 								>
-									<div className="mb-3 flex items-baseline justify-between gap-4">
+									<div className="mb-4 flex items-baseline justify-between gap-4">
 										<h2
 											id={`group-${group.id}`}
 											className="text-lg font-semibold text-zinc-900 dark:text-white"
@@ -275,7 +275,7 @@ export default function Wallet() {
 									</div>
 									<div
 										className={cn(
-											"grid grid-cols-1 gap-3",
+											"grid grid-cols-1 gap-4",
 											isCards
 												? "sm:grid-cols-2 xl:grid-cols-3"
 												: "lg:grid-cols-2",
